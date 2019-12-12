@@ -1,5 +1,7 @@
 # idgo 简介
+
 [![Build Status](https://travis-ci.org/flike/idgo.svg?branch=master)](https://travis-ci.org/flike/idgo)
+
 ## 1. idgo特点
 
 idgo是一个利用MySQL批量生成ID的ID生成器, 主要有以下特点:
@@ -15,9 +17,11 @@ idgo是一个利用MySQL批量生成ID的ID生成器, 主要有以下特点:
 REPLACE INTO Tickets64 (stub) VALUES ('a');
 SELECT LAST_INSERT_ID();
 ```
+
 这种方式生成ID的弊端就是每生成一个ID都需要查询一下MySQL,当ID生成过快时会对MySQL造成很大的压力。这正式我开发这个项目的原因。服务端兼容Redis协议是为了避免单独开发和idgo通信的SDK。
 
 ## 2. idgo架构
+
 idgo和前端应用是采用redis协议通信的，然后每个`id_key`是存储在MySQL数据库中，每个key会在MySQL中生成一张表，表中只有一条记录。这样做的目的是保证当idgo由于意外崩溃后，`id_key`对应的值不会丢失，这样就避免产生了id回绕的风险。
 ![idgo_arch](http://ww2.sinaimg.cn/large/6e5705a5gw1f2nz3bot3tj20qo0k0mxe.jpg)
 
@@ -32,20 +36,19 @@ idgo目前只支持四个redis命令：
 5. SELECT index,选择一个db，目前是一个假方法，没实现任何功能，只是为了避免初始化客户端时调用SELECT出错。
 ```
 
-
 ## 3. 安装和使用idgo
 
 1. 安装idgo
 
-```
-	1. 安装Go语言环境（Go版本1.3以上），具体步骤请Google。
-	2. 安装godep工具, go get github.com/tools/godep 。 
-	2. git clone https://github.com/flike/idgo src/github.com/flike/idgo
-	3. cd src/github.com/flike/idgo
-	4. source ./dev.sh
-	5. make
-	6. 设置配置文件
-	7. 运行idgo。./bin/idgo -config=etc/idgo.toml
+```text
+1. 安装Go语言环境（Go版本1.3以上），具体步骤请Google。
+2. 安装godep工具, go get github.com/tools/godep 。 
+2. git clone https://github.com/flike/idgo src/github.com/flike/idgo
+3. cd src/github.com/flike/idgo
+4. source ./dev.sh
+5. make
+6. 设置配置文件
+7. 运行idgo。./bin/idgo -config=etc/idgo.toml
 ```
 
 

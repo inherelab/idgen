@@ -1,0 +1,15 @@
+addr="127.0.0.1:6389"
+#log_path: /Users/flike/src 
+#日志级别
+log_level="debug"
+# db table name
+table_name="global_id"
+
+[storage_db]
+host="47.108.133.21"
+port=6033
+user="root"
+password="riC%sdsdsD^^68$##rwwdPTO%a6s&a"
+db_name="test"
+# db settings
+max_idle_conns=64

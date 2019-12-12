@@ -11,12 +11,11 @@ import (
 	"syscall"
 
 	"github.com/flike/golog"
-	"github.com/flike/idgo/config"
 	"github.com/flike/idgo/server"
 )
 
-var configFile = flag.String("config", "etc/idgo.toml", "idgo config file")
-var logLevel = flag.String("log-level", "", "log level [debug|info|warn|error], default error")
+var configFile = flag.String("config", "config/idgo.toml", "idgo config file")
+var logLevel = flag.String("log-level", "error", "log level [debug|info|warn|error], default error")
 
 const (
 	sysLogName = "sys.log"
@@ -32,7 +31,7 @@ func main() {
 		return
 	}
 
-	cfg, err := config.ParseConfigFile(*configFile)
+	cfg, err := server.ParseConfigFile(*configFile)
 	if err != nil {
 		fmt.Printf("parse config file error:%v\n", err.Error())
 		return
@@ -55,29 +54,33 @@ func main() {
 		setLogLevel(cfg.LogLevel)
 	}
 
+	err = startAndRunServer(cfg)
+	if err != nil {
+		golog.Error("main", "main", err.Error(), 0)
+		golog.GlobalLogger.Close()
+		fmt.Println(err.Error())
+	}
+}
+
+func startAndRunServer(cfg *server.Config) (err error) {
 	var s *server.Server
+
+	// create server
 	s, err = server.NewServer(cfg)
 	if err != nil {
-		golog.Error("main", "main", err.Error(), 0)
-		golog.GlobalLogger.Close()
 		s.Close()
 		return
 	}
 
-	err = s.Init()
-	if err != nil {
-		golog.Error("main", "main", err.Error(), 0)
-		golog.GlobalLogger.Close()
+	// init server
+	if err = s.Init(); err != nil {
 		s.Close()
 		return
 	}
 
+	// listen signals
 	sc := make(chan os.Signal, 1)
-	signal.Notify(sc,
-		syscall.SIGHUP,
-		syscall.SIGINT,
-		syscall.SIGTERM,
-		syscall.SIGQUIT)
+	signal.Notify(sc, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
 	go func() {
 		sig := <-sc
@@ -85,8 +88,10 @@ func main() {
 		golog.GlobalLogger.Close()
 		s.Close()
 	}()
-	golog.Info("main", "main", "Idgo start!", 0)
-	s.Serve()
+
+	// server run
+	golog.Info("main", "main", "Idgo server started", 0)
+	return s.Serve()
 }
 
 func setLogLevel(level string) {

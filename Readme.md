@@ -1,4 +1,5 @@
-## 1. Overview [中文主页](Readme_zh.md)
+## Overview [中文主页](Readme_zh.md)
+
 [![Build Status](https://travis-ci.org/flike/idgo.svg?branch=master)](https://travis-ci.org/flike/idgo)
 
 Idgo is a sequential id generator which can generate batch ids through MySQL transcation way. Its features as follows:
@@ -13,7 +14,6 @@ Someone knows the resolution of generating id with MySQL:
 ```
 REPLACE INTO Tickets64 (stub) VALUES ('a');
 SELECT LAST_INSERT_ID();
-
 ```
 
 The disadvantage of this resolution is that generates one id need query MySQL once. When generating id too quickly, leading MySQL overload. This is why I build this project to generating ids.

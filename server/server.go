@@ -8,11 +8,11 @@ import (
 	"sync"
 
 	"github.com/flike/golog"
-	"github.com/flike/idgo/config"
 )
 
 const (
-	KeyRecordTableName         = "__idgo__"
+	// KeyRecordTableName         = "__idgo__"
+
 	CreateRecordTableSQLFormat = `
 	CREATE TABLE %s (
     k VARCHAR(255) NOT NULL,
@@ -34,19 +34,18 @@ const (
 
 // Server struct definition
 type Server struct {
-	cfg *config.Config
+	cfg *Config
+	db  *sql.DB
 
-	listener net.Listener
-	db       *sql.DB
+	tcpListener  net.Listener
+	generatorMap map[string]*MySQLIdGenerator
 
-	keyGeneratorMap map[string]*MySQLIdGenerator
-
-	sync.RWMutex
 	running bool
+	sync.RWMutex
 }
 
 // NewServer create new server
-func NewServer(c *config.Config) (*Server, error) {
+func NewServer(c *Config) (*Server, error) {
 	s := new(Server)
 	s.cfg = c
 
@@ -54,32 +53,36 @@ func NewServer(c *config.Config) (*Server, error) {
 	// init db
 	proto := "mysql"
 	charset := "utf8"
+
 	// root:@tcp(127.0.0.1:3306)/test?charset=utf8
 	url := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s",
-		c.DatabaseConfig.User,
-		c.DatabaseConfig.Password,
-		c.DatabaseConfig.Host,
-		c.DatabaseConfig.Port,
-		c.DatabaseConfig.DBName,
+		c.DbConfig.User,
+		c.DbConfig.Password,
+		c.DbConfig.Host,
+		c.DbConfig.Port,
+		c.DbConfig.DBName,
 		charset,
 	)
 
+	logInfo("NewServer", "begin open mysql connection")
 	s.db, err = sql.Open(proto, url)
 	if err != nil {
 		golog.Error("main", "NewServer", "open database error", 0,
 			"err", err.Error(),
 		)
-		return nil, err
+		return s, err
 	}
 
+	// create an tcp listen serve
 	netProto := "tcp"
-	s.listener, err = net.Listen(netProto, s.cfg.Addr)
+	logInfo("NewServer", "begin create an tcp listen serve")
+	s.tcpListener, err = net.Listen(netProto, s.cfg.Addr)
 	if err != nil {
-		return nil, err
+		return s, err
 	}
-	s.keyGeneratorMap = make(map[string]*MySQLIdGenerator)
 
-	golog.Info("server", "NewServer", "Server running", 0,
+	s.generatorMap = make(map[string]*MySQLIdGenerator)
+	logInfo("NewServer", "Server running",
 		"netProto",
 		netProto,
 		"address",
@@ -89,13 +92,15 @@ func NewServer(c *config.Config) (*Server, error) {
 	return s, nil
 }
 
+// Init server
 func (s *Server) Init() error {
-	createTableNtSQL := fmt.Sprintf(CreateRecordTableNTSQLFormat, KeyRecordTableName)
-	selectKeysSQL := fmt.Sprintf(SelectKeysSQLFormat, KeyRecordTableName)
+	createTableNtSQL := fmt.Sprintf(CreateRecordTableNTSQLFormat, s.cfg.TableName)
+	selectKeysSQL := fmt.Sprintf(SelectKeysSQLFormat, s.cfg.TableName)
 	_, err := s.db.Exec(createTableNtSQL)
 	if err != nil {
 		return err
 	}
+
 	rows, err := s.db.Query(selectKeysSQL)
 	if err != nil {
 		return err
@@ -110,7 +115,7 @@ func (s *Server) Init() error {
 		}
 
 		if idGenKey != "" {
-			idgen, ok := s.keyGeneratorMap[idGenKey]
+			idgen, ok := s.generatorMap[idGenKey]
 			if ok == false {
 				isExist, err := s.IsKeyExist(idGenKey)
 				if err != nil {
@@ -121,7 +126,7 @@ func (s *Server) Init() error {
 					if err != nil {
 						return err
 					}
-					s.keyGeneratorMap[idGenKey] = idgen
+					s.generatorMap[idGenKey] = idgen
 				}
 			}
 		}
@@ -133,7 +138,7 @@ func (s *Server) Init() error {
 func (s *Server) Serve() error {
 	s.running = true
 	for s.running {
-		conn, err := s.listener.Accept()
+		conn, err := s.tcpListener.Accept()
 		if err != nil {
 			golog.Error("server", "Run", err.Error(), 0)
 			continue
@@ -202,8 +207,8 @@ func (s *Server) ServeRequest(request *Request) Reply {
 // Close server
 func (s *Server) Close() {
 	s.running = false
-	if s.listener != nil {
-		s.listener.Close()
+	if s.tcpListener != nil {
+		s.tcpListener.Close()
 	}
 
 	golog.Info("server", "close", "server closed!", 0)
@@ -240,7 +245,7 @@ func (s *Server) IsKeyExist(key string) (bool, error) {
 func (s *Server) GetKey(key string) (string, error) {
 	keyName := ""
 
-	selectKeySQL := fmt.Sprintf(SelectKeySQLFormat, KeyRecordTableName, key)
+	selectKeySQL := fmt.Sprintf(SelectKeySQLFormat, s.cfg.TableName, key)
 	rows, err := s.db.Query(selectKeySQL)
 	if err != nil {
 		return keyName, err
@@ -269,7 +274,7 @@ func (s *Server) SetKey(key string) error {
 	if err == nil {
 		return nil
 	} else {
-		insertKeySQL := fmt.Sprintf(InsertKeySQLFormat, KeyRecordTableName, key)
+		insertKeySQL := fmt.Sprintf(InsertKeySQLFormat, s.cfg.TableName, key)
 		_, err = s.db.Exec(insertKeySQL)
 		if err != nil {
 			return err
@@ -286,7 +291,7 @@ func (s *Server) DelKey(key string) error {
 
 	_, err := s.GetKey(key)
 	if err == nil {
-		deleteKeySQL := fmt.Sprintf(DeleteKeySQLFormat, KeyRecordTableName, key)
+		deleteKeySQL := fmt.Sprintf(DeleteKeySQLFormat, s.cfg.TableName, key)
 
 		_, err = s.db.Exec(deleteKeySQL)
 		if err != nil {
@@ -296,4 +301,12 @@ func (s *Server) DelKey(key string) error {
 	}
 
 	return err
+}
+
+func logInfo(method, msg string, args ...interface{})  {
+	golog.Info("Server", method, msg, 0, args...)
+}
+
+func logError(method, msg string, args ...interface{})  {
+	golog.Error("Server", method, msg, 0, args...)
 }

@@ -17,7 +17,7 @@ func (s *Server) handleGet(r *Request) Reply {
 		return ErrNoKey
 	}
 	s.Lock()
-	idgen, ok = s.keyGeneratorMap[idGenKey]
+	idgen, ok = s.generatorMap[idGenKey]
 
 	if ok == false {
 		s.Unlock()
@@ -59,7 +59,7 @@ func (s *Server) handleSet(r *Request) Reply {
 		return errReply
 	}
 	s.Lock()
-	idgen, ok = s.keyGeneratorMap[idGenKey]
+	idgen, ok = s.generatorMap[idGenKey]
 	if ok == false {
 		idgen, err = NewMySQLIdGenerator(s.db, idGenKey)
 		if err != nil {
@@ -68,7 +68,7 @@ func (s *Server) handleSet(r *Request) Reply {
 				message: err.Error(),
 			}
 		}
-		s.keyGeneratorMap[idGenKey] = idgen
+		s.generatorMap[idGenKey] = idgen
 	}
 
 	s.Unlock()
@@ -104,7 +104,7 @@ func (s *Server) handleExists(r *Request) Reply {
 		return ErrNoKey
 	}
 	s.Lock()
-	_, ok = s.keyGeneratorMap[idGenKey]
+	_, ok = s.generatorMap[idGenKey]
 	s.Unlock()
 	if ok {
 		id = 1
@@ -128,12 +128,14 @@ func (s *Server) handleDel(r *Request) Reply {
 	if len(idGenKey) == 0 {
 		return ErrNoKey
 	}
+
 	s.Lock()
-	idgen, ok = s.keyGeneratorMap[idGenKey]
+	idgen, ok = s.generatorMap[idGenKey]
 	if ok {
-		delete(s.keyGeneratorMap, idGenKey)
+		delete(s.generatorMap, idGenKey)
 	}
 	s.Unlock()
+
 	if ok {
 		err := idgen.DelKeyTable(idGenKey)
 		if err != nil {
