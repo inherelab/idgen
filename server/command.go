@@ -3,8 +3,6 @@ package server
 import "strconv"
 
 func (s *Server) handleGet(r *Request) Reply {
-	var idgen *MySQLIdGenerator
-	var ok bool
 	var id int64
 	var err error
 
@@ -17,8 +15,8 @@ func (s *Server) handleGet(r *Request) Reply {
 		return ErrNoKey
 	}
 	s.Lock()
-	idgen, ok = s.generatorMap[idGenKey]
 
+	idgen, ok := s.generatorMap[idGenKey]
 	if ok == false {
 		s.Unlock()
 		return &BulkReply{
@@ -42,10 +40,7 @@ func (s *Server) handleGet(r *Request) Reply {
 
 // redis command(set abc 12)
 func (s *Server) handleSet(r *Request) Reply {
-	var idgen *MySQLIdGenerator
-	var ok bool
 	var err error
-
 	if r.HasArgument(0) == false {
 		return ErrNotEnoughArgs
 	}
@@ -58,8 +53,9 @@ func (s *Server) handleSet(r *Request) Reply {
 	if errReply != nil {
 		return errReply
 	}
+
 	s.Lock()
-	idgen, ok = s.generatorMap[idGenKey]
+	idgen, ok := s.generatorMap[idGenKey]
 	if ok == false {
 		idgen, err = NewMySQLIdGenerator(s.db, idGenKey)
 		if err != nil {
@@ -68,6 +64,7 @@ func (s *Server) handleSet(r *Request) Reply {
 				message: err.Error(),
 			}
 		}
+
 		s.generatorMap[idGenKey] = idgen
 	}
 
@@ -116,10 +113,7 @@ func (s *Server) handleExists(r *Request) Reply {
 }
 
 func (s *Server) handleDel(r *Request) Reply {
-	var idgen *MySQLIdGenerator
-	var ok bool
 	var id int64 = 0
-
 	if r.HasArgument(0) == false {
 		return ErrNotEnoughArgs
 	}
@@ -130,7 +124,7 @@ func (s *Server) handleDel(r *Request) Reply {
 	}
 
 	s.Lock()
-	idgen, ok = s.generatorMap[idGenKey]
+	idgen, ok := s.generatorMap[idGenKey]
 	if ok {
 		delete(s.generatorMap, idGenKey)
 	}

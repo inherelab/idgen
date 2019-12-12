@@ -126,14 +126,16 @@ func MalformedMissingCRLF() error {
 type Reply io.WriterTo
 
 var (
-	ErrMethodNotSupported   = &ErrorReply{"Method is not supported"}
-	ErrNotEnoughArgs        = &ErrorReply{"Not enough arguments for the command"}
-	ErrTooMuchArgs          = &ErrorReply{"Too many arguments for the command"}
-	ErrWrongArgsNumber      = &ErrorReply{"Wrong number of arguments"}
-	ErrExpectInteger        = &ErrorReply{"Expected integer"}
-	ErrExpectPositivInteger = &ErrorReply{"Expected positive integer"}
-	ErrExpectMorePair       = &ErrorReply{"Expected at least one key val pair"}
-	ErrExpectEvenPair       = &ErrorReply{"Got uneven number of key val pairs"}
+	ErrMethodNotSupported = &ErrorReply{"Method is not supported"}
+
+	ErrNotEnoughArgs   = &ErrorReply{"Not enough arguments for the command"}
+	ErrTooMuchArgs     = &ErrorReply{"Too many arguments for the command"}
+	ErrWrongArgsNumber = &ErrorReply{"Wrong number of arguments"}
+	ErrExpectInteger   = &ErrorReply{"Expected integer"}
+	ErrExpectMorePair  = &ErrorReply{"Expected at least one key val pair"}
+	ErrExpectEvenPair  = &ErrorReply{"Got uneven number of key val pairs"}
+
+	ErrExpectPositiveInteger = &ErrorReply{"Expected positive integer"}
 
 	ErrNoKey = &ErrorReply{"no key for set"}
 )

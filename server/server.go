@@ -13,6 +13,8 @@ import (
 const (
 	// move to config
 	// KeyRecordTableName         = "__idgo__"
+	SingleTable = "single"
+	MultiTable  = "multi"
 
 	CreateRecordTableSQLFormat = `
 	CREATE TABLE %s (

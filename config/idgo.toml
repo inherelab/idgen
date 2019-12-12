@@ -4,7 +4,8 @@
 
 # listen addr
 addr="127.0.0.1:6389"
-#log_path: /Users/flike/src 
+#log_path: /Users/flike/src
+table_mode="single" # single, multi
 #日志级别
 log_level="debug"
 # db table name

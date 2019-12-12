@@ -8,13 +8,16 @@ import (
 
 // Config struct
 type Config struct {
-	Addr        string    `toml:"addr"`
-	LogPath     string    `toml:"log_path"`
-	LogLevel    string    `toml:"log_level"`
-	DbConfig    *DBConfig `toml:"storage_db"`
-	BatchCount  int64       `toml:"batch_count"`
-	TableName   string    `toml:"table_name"`
-	TablePrefix string    `toml:"table_prefix"`
+	// the server listen addr
+	Addr        string `toml:"addr"`
+	LogPath     string `toml:"log_path"`
+	LogLevel    string `toml:"log_level"`
+	BatchCount  int64  `toml:"batch_count"`
+	TableMode   string `toml:"table_mode"`
+	TableName   string `toml:"table_name"`
+	TablePrefix string `toml:"table_prefix"`
+	// db config
+	DbConfig *DBConfig `toml:"storage_db"`
 }
 
 // DBConfig mysql db config struct
@@ -24,6 +27,7 @@ type DBConfig struct {
 	User         string `toml:"user"`
 	Password     string `toml:"password"`
 	DBName       string `toml:"db_name"`
+	// TODO db pool config
 	MaxIdleConns int    `toml:"max_idle_conns"`
 }
 

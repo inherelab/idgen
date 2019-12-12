@@ -14,14 +14,14 @@ const (
 	CREATE TABLE %s (
     id bigint(20) unsigned NOT NULL auto_increment,
     PRIMARY KEY  (id)
-) ENGINE=Innodb DEFAULT CHARSET=utf8 `
+) ENGINE=Innodb DEFAULT CHARSET=utf8`
 
 	// create key table if not exist
 	CreateTableNTSQLFormat = `
 	CREATE TABLE IF NOT EXISTS %s (
     id bigint(20) unsigned NOT NULL auto_increment,
     PRIMARY KEY  (id)
-) ENGINE=Innodb DEFAULT CHARSET=utf8 `
+) ENGINE=Innodb DEFAULT CHARSET=utf8`
 
 	DropTableSQLFormat   = `DROP TABLE IF EXISTS %s`
 	InsertIdSQLFormat    = "INSERT INTO %s(id) VALUES(%d)"
