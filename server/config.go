@@ -8,11 +8,13 @@ import (
 
 // Config struct
 type Config struct {
-	Addr     string    `toml:"addr"`
-	LogPath  string    `toml:"log_path"`
-	LogLevel string    `toml:"log_level"`
-	DbConfig *DBConfig `toml:"storage_db"`
-	TableName string 	`toml:"table_name"`
+	Addr        string    `toml:"addr"`
+	LogPath     string    `toml:"log_path"`
+	LogLevel    string    `toml:"log_level"`
+	DbConfig    *DBConfig `toml:"storage_db"`
+	BatchCount  int64       `toml:"batch_count"`
+	TableName   string    `toml:"table_name"`
+	TablePrefix string    `toml:"table_prefix"`
 }
 
 // DBConfig mysql db config struct
@@ -23,6 +25,16 @@ type DBConfig struct {
 	Password     string `toml:"password"`
 	DBName       string `toml:"db_name"`
 	MaxIdleConns int    `toml:"max_idle_conns"`
+}
+
+var cfg = &Config{
+	TableName:   "gid_keys",
+	TablePrefix: "gid_key_",
+}
+
+// SetConfig set config
+func SetConfig(c *Config) {
+	cfg = c
 }
 
 // ParseConfigFile parse config file

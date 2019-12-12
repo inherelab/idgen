@@ -30,7 +30,8 @@ const (
 	GetRowCountSQLFormat = "SELECT count(*) FROM %s"
 	GetKeySQLFormat      = "show tables like '%s'"
 
-	BatchCount = 2000
+	// Move to config
+	// BatchCount = 3000
 )
 
 // MySQLIdGenerator struct definition
@@ -56,7 +57,7 @@ func NewMySQLIdGenerator(db *sql.DB, section string) (*MySQLIdGenerator, error) 
 		return nil, err
 	}
 
-	idGenerator.batch = BatchCount
+	idGenerator.batch = cfg.BatchCount
 	idGenerator.cur = 0
 	idGenerator.batchMax = idGenerator.cur
 	return idGenerator, nil
@@ -71,7 +72,7 @@ func (m *MySQLIdGenerator) SetSection(key string) error {
 // get id from key table
 func (m *MySQLIdGenerator) getIdFromMySQL() (int64, error) {
 	var id int64
-	selectForUpdate := fmt.Sprintf(SelectForUpdate, m.key)
+	selectForUpdate := fmt.Sprintf(SelectForUpdate, getTableName(m.key))
 	tx, err := m.db.Begin()
 	if err != nil {
 		return 0, err
@@ -112,8 +113,8 @@ func (m *MySQLIdGenerator) Current() (int64, error) {
 func (m *MySQLIdGenerator) Next() (int64, error) {
 	var id int64
 	var haveValue bool
-	selectForUpdate := fmt.Sprintf(SelectForUpdate, m.key)
-	updateIdSql := fmt.Sprintf(UpdateIdSQLFormat, m.key, m.batch)
+	selectForUpdate := fmt.Sprintf(SelectForUpdate, getTableName(m.key))
+	updateIdSql := fmt.Sprintf(UpdateIdSQLFormat, getTableName(m.key), m.batch)
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
@@ -161,7 +162,7 @@ func (m *MySQLIdGenerator) Next() (int64, error) {
 		}
 
 		// batchMax is larger than cur BatchCount
-		m.batchMax = id + BatchCount
+		m.batchMax = id + cfg.BatchCount
 		m.cur = id
 	}
 
@@ -179,17 +180,19 @@ func (m *MySQLIdGenerator) Init() error {
 	if err != nil {
 		return err
 	}
+	
 	m.batchMax = m.cur
 	return nil
 }
 
 // if force is true, create table directly
 // if force is false, create table use CreateTableNTSQLFormat
-func (m *MySQLIdGenerator) Reset(idOffset int64, force bool) error {
-	var err error
-	createTableSQL := fmt.Sprintf(CreateTableSQLFormat, m.key)
-	createTableNtSQL := fmt.Sprintf(CreateTableNTSQLFormat, m.key)
-	dropTableSQL := fmt.Sprintf(DropTableSQLFormat, m.key)
+func (m *MySQLIdGenerator) Reset(idOffset int64, force bool) (err error) {
+	tableName := getTableName(m.key)
+
+	createTableSQL := fmt.Sprintf(CreateTableSQLFormat, tableName)
+	createTableNtSQL := fmt.Sprintf(CreateTableNTSQLFormat, tableName)
+	dropTableSQL := fmt.Sprintf(DropTableSQLFormat, tableName)
 
 	m.lock.Lock()
 	defer m.lock.Unlock()
@@ -197,21 +200,21 @@ func (m *MySQLIdGenerator) Reset(idOffset int64, force bool) error {
 	if force == true {
 		_, err = m.db.Exec(dropTableSQL)
 		if err != nil {
-			return err
+			return
 		}
 		_, err = m.db.Exec(createTableSQL)
 		if err != nil {
-			return err
+			return
 		}
 	} else {
 		var rowCount int64
 		_, err = m.db.Exec(createTableNtSQL)
 		if err != nil {
-			return err
+			return
 		}
 
 		// check the idgo value if exist
-		getRowCountSQL := fmt.Sprintf(GetRowCountSQLFormat, m.key)
+		getRowCountSQL := fmt.Sprintf(GetRowCountSQLFormat, getTableName(m.key))
 		rows, err := m.db.Query(getRowCountSQL)
 		if err != nil {
 			return err
@@ -235,7 +238,7 @@ func (m *MySQLIdGenerator) Reset(idOffset int64, force bool) error {
 		}
 	}
 
-	insertIdSQL := fmt.Sprintf(InsertIdSQLFormat, m.key, idOffset)
+	insertIdSQL := fmt.Sprintf(InsertIdSQLFormat, getTableName(m.key), idOffset)
 	_, err = m.db.Exec(insertIdSQL)
 	if err != nil {
 		if _, err1 := m.db.Exec(dropTableSQL); err1 != nil {
@@ -251,11 +254,15 @@ func (m *MySQLIdGenerator) Reset(idOffset int64, force bool) error {
 
 // DelKeyTable delete key table
 func (m *MySQLIdGenerator) DelKeyTable(key string) error {
-	dropTableSQL := fmt.Sprintf(DropTableSQLFormat, key)
+	dropTableSQL := fmt.Sprintf(DropTableSQLFormat, getTableName(key))
 
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
 	_, err := m.db.Exec(dropTableSQL)
 	return err
+}
+
+func getTableName(key string) string  {
+	return cfg.TablePrefix + key
 }

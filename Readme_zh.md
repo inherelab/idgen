@@ -38,21 +38,16 @@ idgo目前只支持四个redis命令：
 
 ## 3. 安装和使用idgo
 
-1. 安装idgo
+安装idgo:
 
-```text
-1. 安装Go语言环境（Go版本1.3以上），具体步骤请Google。
-2. 安装godep工具, go get github.com/tools/godep 。 
-2. git clone https://github.com/flike/idgo src/github.com/flike/idgo
-3. cd src/github.com/flike/idgo
-4. source ./dev.sh
-5. make
+1. 安装Go语言环境（Go版本1.11以上），具体步骤请Google。
+2. `git clone https://github.com/flike/idgo idgo`
+3. `cd idgo`
+4. `go mod tidy`
 6. 设置配置文件
-7. 运行idgo。./bin/idgo -config=etc/idgo.toml
-```
+7. 运行idgo: `./bin/idgo -config=etc/idgo.toml`
 
-
-设置配置文件(`etc/idgo.toml`):
+设置配置文件(`config/idgo.toml`):
 
 ```
 #idgo的IP和port
@@ -74,7 +69,7 @@ max_idle_conns=64
 
 ```
 #启动idgo
-➜  idgo git:(master) ✗ ./bin/idgo -config=etc/idgo.toml
+➜  idgo git:(master) ✗ ./bin/idgo -config=config/idgo.toml
 2016/04/07 11:51:20 - INFO - server.go:[62] - [server] "NewServer" "Server running" "netProto=tcp|address=127.0.0.1:6389" req_id=0
 2016/04/07 11:51:20 - INFO - main.go:[80] - [main] "main" "Idgo start!" "" req_id=0
 

@@ -1,7 +1,6 @@
 package server
 
 import (
-	"database/sql"
 	"fmt"
 	"sync"
 	"testing"
@@ -10,18 +9,25 @@ import (
 )
 
 var wg sync.WaitGroup
-var db *sql.DB
+var ts *Server
 
 func init() {
 	var err error
 
-	db, err = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/test?charset=utf8")
+	// load config
+	cfg, err = ParseConfigFile("../config/idgo.toml")
 	if err != nil {
-		fmt.Println(err.Error())
+		panic(err.Error())
+	}
+
+	// new server
+	ts, err = NewServer()
+	if err != nil {
+		panic(err.Error())
 	}
 }
 
-func GetId(idGenerator *MySQLIdGenerator) {
+func forGetId(idGenerator *MySQLIdGenerator) {
 	defer wg.Done()
 	for i := 0; i < 100; i++ {
 		_, err := idGenerator.Next()
@@ -31,8 +37,8 @@ func GetId(idGenerator *MySQLIdGenerator) {
 	}
 }
 
-func TestMySQLIdgen(t *testing.T) {
-	idGenerator, err := NewMySQLIdGenerator(db, "mysql_victory")
+func TestMySQLId1Gen(t *testing.T) {
+	idGenerator, err := NewMySQLIdGenerator(ts.db, "idgen_test")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -40,12 +46,14 @@ func TestMySQLIdgen(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	//10 goroutine
+
+	// 10 goroutine
 	wg.Add(10)
 	for i := 0; i < 10; i++ {
-		go GetId(idGenerator)
+		go forGetId(idGenerator)
 	}
 	wg.Wait()
+
 	id, err := idGenerator.Next()
 	if err != nil {
 		t.Fatal(err.Error())
@@ -53,23 +61,29 @@ func TestMySQLIdgen(t *testing.T) {
 	t.Log(id)
 }
 
-func BenchmarkMySQLIdgen(b *testing.B) {
-	idGenerator, err := NewMySQLIdGenerator(db, "mysql_file")
+func BenchmarkMySQLIdGen(b *testing.B) {
+	idGenerator, err := NewMySQLIdGenerator(ts.db, "idgen_bench")
 	if err != nil {
 		b.Fatal(err.Error())
 	}
+
 	err = idGenerator.Reset(1, false)
 	if err != nil {
 		b.Fatal(err.Error())
 	}
 
+	var gid int64
+
 	b.StartTimer()
-	for i := 0; i < 1000; i++ {
-		_, err = idGenerator.Next()
+	fmt.Println("start id: ", b.N)
+	// for i := 0; i < 1000; i++ {
+	for i := 0; i < b.N; i++ {
+		gid, err = idGenerator.Next()
 		if err != nil {
 			b.Fatal(err.Error())
 		}
 	}
-
 	b.StopTimer()
+
+	fmt.Println("last Gid: ", gid)
 }

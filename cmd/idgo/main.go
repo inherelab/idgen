@@ -22,6 +22,10 @@ const (
 	MaxLogSize = 1024 * 1024 * 1024
 )
 
+// Local run:
+// 	go run ./cmd/idgo/main.go --log-level debug
+// Bench test:
+// 	go test -bench Gen ./server
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	flag.Parse()
@@ -65,8 +69,11 @@ func main() {
 func startAndRunServer(cfg *server.Config) (err error) {
 	var s *server.Server
 
+	// set config
+	server.SetConfig(cfg)
+
 	// create server
-	s, err = server.NewServer(cfg)
+	s, err = server.NewServer()
 	if err != nil {
 		s.Close()
 		return
@@ -90,7 +97,6 @@ func startAndRunServer(cfg *server.Config) (err error) {
 	}()
 
 	// server run
-	golog.Info("main", "main", "Idgo server started", 0)
 	return s.Serve()
 }
 
