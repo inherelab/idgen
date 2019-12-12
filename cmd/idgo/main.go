@@ -15,8 +15,8 @@ import (
 	"github.com/flike/idgo/server"
 )
 
-var configFile *string = flag.String("config", "etc/idgo.toml", "idgo config file")
-var logLevel *string = flag.String("log-level", "", "log level [debug|info|warn|error], default error")
+var configFile = flag.String("config", "etc/idgo.toml", "idgo config file")
+var logLevel = flag.String("log-level", "", "log level [debug|info|warn|error], default error")
 
 const (
 	sysLogName = "sys.log"
@@ -38,7 +38,7 @@ func main() {
 		return
 	}
 
-	//when the log file size greater than 1GB, kingtask will generate a new file
+	// when the log file size greater than 1GB, kingtask will generate a new file
 	if len(cfg.LogPath) != 0 {
 		sysFilePath := path.Join(cfg.LogPath, sysLogName)
 		sysFile, err := golog.NewRotatingFileHandler(sysFilePath, MaxLogSize, 1)

@@ -19,7 +19,7 @@ const (
     PRIMARY KEY (k)
 ) ENGINE=Innodb DEFAULT CHARSET=utf8 `
 
-	//create key table if not exist
+	// create key table if not exist
 	CreateRecordTableNTSQLFormat = `
 	CREATE TABLE IF NOT EXISTS %s (
     k VARCHAR(255) NOT NULL,
@@ -32,25 +32,29 @@ const (
 	DeleteKeySQLFormat  = "DELETE FROM %s WHERE k = '%s'"
 )
 
+// Server struct definition
 type Server struct {
 	cfg *config.Config
 
-	listener        net.Listener
-	db              *sql.DB
+	listener net.Listener
+	db       *sql.DB
+
 	keyGeneratorMap map[string]*MySQLIdGenerator
+
 	sync.RWMutex
 	running bool
 }
 
+// NewServer create new server
 func NewServer(c *config.Config) (*Server, error) {
 	s := new(Server)
 	s.cfg = c
 
 	var err error
-	//init db
+	// init db
 	proto := "mysql"
 	charset := "utf8"
-	//root:@tcp(127.0.0.1:3306)/test?charset=utf8
+	// root:@tcp(127.0.0.1:3306)/test?charset=utf8
 	url := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s",
 		c.DatabaseConfig.User,
 		c.DatabaseConfig.Password,
@@ -96,6 +100,7 @@ func (s *Server) Init() error {
 	if err != nil {
 		return err
 	}
+
 	defer rows.Close()
 	for rows.Next() {
 		idGenKey := ""
@@ -103,6 +108,7 @@ func (s *Server) Init() error {
 		if err != nil {
 			return err
 		}
+
 		if idGenKey != "" {
 			idgen, ok := s.keyGeneratorMap[idGenKey]
 			if ok == false {
@@ -123,6 +129,7 @@ func (s *Server) Init() error {
 	return nil
 }
 
+// Serve receive connection
 func (s *Server) Serve() error {
 	s.running = true
 	for s.running {
@@ -137,6 +144,7 @@ func (s *Server) Serve() error {
 	return nil
 }
 
+// handle connection
 func (s *Server) onConn(conn net.Conn) error {
 	defer func() {
 		clientAddr := conn.RemoteAddr().String()
@@ -144,7 +152,7 @@ func (s *Server) onConn(conn net.Conn) error {
 		if err, ok := r.(error); ok {
 			const size = 4096
 			buf := make([]byte, size)
-			buf = buf[:runtime.Stack(buf, false)] //获得当前goroutine的stacktrace
+			buf = buf[:runtime.Stack(buf, false)] // 获得当前goroutine的stacktrace
 			golog.Error("server", "onConn", "error", 0,
 				"remoteAddr", clientAddr,
 				"stack", string(buf),
@@ -158,6 +166,7 @@ func (s *Server) onConn(conn net.Conn) error {
 		conn.Close()
 	}()
 
+	// for loop
 	for {
 		request, err := NewRequest(conn)
 		if err != nil {
@@ -170,9 +179,7 @@ func (s *Server) onConn(conn net.Conn) error {
 				"err", err.Error())
 			return err
 		}
-
 	}
-	return nil
 }
 
 func (s *Server) ServeRequest(request *Request) Reply {
@@ -190,15 +197,15 @@ func (s *Server) ServeRequest(request *Request) Reply {
 	default:
 		return ErrMethodNotSupported
 	}
-
-	return nil
 }
 
+// Close server
 func (s *Server) Close() {
 	s.running = false
 	if s.listener != nil {
 		s.listener.Close()
 	}
+
 	golog.Info("server", "close", "server closed!", 0)
 }
 
@@ -213,6 +220,7 @@ func (s *Server) IsKeyExist(key string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+
 	defer rows.Close()
 	for rows.Next() {
 		err := rows.Scan(&tableName)
@@ -221,19 +229,23 @@ func (s *Server) IsKeyExist(key string) (bool, error) {
 		}
 		haveValue = true
 	}
+
 	if haveValue == false {
 		return false, nil
 	}
 	return true, nil
 }
 
+// Get value by key
 func (s *Server) GetKey(key string) (string, error) {
 	keyName := ""
+
 	selectKeySQL := fmt.Sprintf(SelectKeySQLFormat, KeyRecordTableName, key)
 	rows, err := s.db.Query(selectKeySQL)
 	if err != nil {
 		return keyName, err
 	}
+
 	defer rows.Close()
 	for rows.Next() {
 		err := rows.Scan(&keyName)
@@ -241,12 +253,14 @@ func (s *Server) GetKey(key string) (string, error) {
 			return keyName, err
 		}
 	}
+
 	if keyName == "" {
-		return keyName, fmt.Errorf("%s:not exists key", key)
+		return keyName, fmt.Errorf("%s: not exists key", key)
 	}
 	return keyName, nil
 }
 
+// SetKey set key
 func (s *Server) SetKey(key string) error {
 	if len(key) == 0 {
 		return fmt.Errorf("%s:invalid key", key)
@@ -264,19 +278,22 @@ func (s *Server) SetKey(key string) error {
 	}
 }
 
+// DelKey delete key
 func (s *Server) DelKey(key string) error {
 	if len(key) == 0 {
-		return fmt.Errorf("%s:invalid key", key)
+		return fmt.Errorf("key is cannot be empty")
 	}
+
 	_, err := s.GetKey(key)
 	if err == nil {
-		deletetKeySQL := fmt.Sprintf(DeleteKeySQLFormat, KeyRecordTableName, key)
-		_, err = s.db.Exec(deletetKeySQL)
+		deleteKeySQL := fmt.Sprintf(DeleteKeySQLFormat, KeyRecordTableName, key)
+
+		_, err = s.db.Exec(deleteKeySQL)
 		if err != nil {
 			return err
 		}
 		return nil
-	} else {
-		return nil
 	}
+
+	return err
 }

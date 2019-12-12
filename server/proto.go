@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// Request struct definition
 type Request struct {
 	Command       string
 	Arguments     [][]byte
@@ -16,10 +17,12 @@ type Request struct {
 	Connection    io.ReadCloser
 }
 
+// HasArgument check
 func (r *Request) HasArgument(index int) bool {
 	return index >= 0 && index < len(r.Arguments)
 }
 
+// ExpectArgument check
 func (r *Request) ExpectArgument(index int) *ErrorReply {
 	if !r.HasArgument(index) {
 		return ErrNotEnoughArgs
@@ -27,6 +30,7 @@ func (r *Request) ExpectArgument(index int) *ErrorReply {
 	return nil
 }
 
+// GetInt get int
 func (r *Request) GetInt(index int) (int64, *ErrorReply) {
 	if errReply := r.ExpectArgument(index); errReply != nil {
 		return -1, errReply
@@ -38,6 +42,7 @@ func (r *Request) GetInt(index int) (int64, *ErrorReply) {
 	}
 }
 
+// NewRequest new request from connection
 func NewRequest(conn io.ReadCloser) (*Request, error) {
 	reader := bufio.NewReader(conn)
 
@@ -106,17 +111,18 @@ func readArgument(reader *bufio.Reader) ([]byte, error) {
 }
 
 func Malformed(expected string, got string) error {
-	return fmt.Errorf("Mailformed request: %s does not match %s", got, expected)
+	return fmt.Errorf("mailformed request: %s does not match %s", got, expected)
 }
 
 func MalformedLength(expected int, got int) error {
-	return fmt.Errorf("Mailformed request: argument length %d does not match %d", got, expected)
+	return fmt.Errorf("mailformed request: argument length %d does not match %d", got, expected)
 }
 
 func MalformedMissingCRLF() error {
-	return fmt.Errorf("Mailformed request: line should end with CRLF")
+	return fmt.Errorf("mailformed request: line should end with CRLF")
 }
 
+// Reply definition
 type Reply io.WriterTo
 
 var (
@@ -132,6 +138,7 @@ var (
 	ErrNoKey = &ErrorReply{"no key for set"}
 )
 
+// ErrorReply struct definition
 type ErrorReply struct {
 	message string
 }
@@ -203,6 +210,7 @@ func writeBytes(value interface{}, w io.Writer) (int64, error) {
 	if value == nil {
 		return writeNullBytes(w)
 	}
+
 	switch v := value.(type) {
 	case []byte:
 		if len(v) == 0 {
@@ -220,5 +228,6 @@ func writeBytes(value interface{}, w io.Writer) (int64, error) {
 		wrote, err := w.Write([]byte(":" + strconv.Itoa(v) + "\r\n"))
 		return int64(wrote), err
 	}
-	return 0, fmt.Errorf("Invalid type sent to WriteBytes")
+
+	return 0, fmt.Errorf("invalid type sent to WriteBytes")
 }

@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	//create key table
+	// create key table
 	CreateTableSQLFormat = `
 	CREATE TABLE %s (
     id bigint(20) unsigned NOT NULL auto_increment,
     PRIMARY KEY  (id)
 ) ENGINE=Innodb DEFAULT CHARSET=utf8 `
 
-	//create key table if not exist
+	// create key table if not exist
 	CreateTableNTSQLFormat = `
 	CREATE TABLE IF NOT EXISTS %s (
     id bigint(20) unsigned NOT NULL auto_increment,
@@ -33,16 +33,18 @@ const (
 	BatchCount = 2000
 )
 
+// MySQLIdGenerator struct definition
 type MySQLIdGenerator struct {
 	db       *sql.DB
-	key      string //id generator key name
-	cur      int64  //current id
-	batchMax int64  //max id till get from mysql
-	batch    int64  //get batch count ids from mysql once
+	key      string // id generator key name
+	cur      int64  // current id
+	batchMax int64  // max id till get from mysql
+	batch    int64  // get batch count ids from mysql once
 
 	lock sync.Mutex
 }
 
+// NewMySQLIdGenerator create new MySQLIdGenerator
 func NewMySQLIdGenerator(db *sql.DB, section string) (*MySQLIdGenerator, error) {
 	idGenerator := new(MySQLIdGenerator)
 	idGenerator.db = db
@@ -60,12 +62,13 @@ func NewMySQLIdGenerator(db *sql.DB, section string) (*MySQLIdGenerator, error) 
 	return idGenerator, nil
 }
 
+// SetSection by key
 func (m *MySQLIdGenerator) SetSection(key string) error {
 	m.key = key
 	return nil
 }
 
-//get id from key table
+// get id from key table
 func (m *MySQLIdGenerator) getIdFromMySQL() (int64, error) {
 	var id int64
 	selectForUpdate := fmt.Sprintf(SelectForUpdate, m.key)
@@ -76,23 +79,28 @@ func (m *MySQLIdGenerator) getIdFromMySQL() (int64, error) {
 
 	rows, err := tx.Query(selectForUpdate)
 	if err != nil {
-		tx.Rollback()
+		if err = tx.Rollback(); err != nil {
+			return 0, err
+		}
 		return 0, err
 	}
+
 	defer rows.Close()
 	for rows.Next() {
 		err := rows.Scan(&id)
 		if err != nil {
-			tx.Rollback()
+			if err = tx.Rollback(); err != nil {
+				return 0, err
+			}
 			return 0, err
 		}
 	}
-	tx.Commit()
 
-	return id, nil
+	err = tx.Commit()
+	return id, err
 }
 
-//get current id
+// Current get current id
 func (m *MySQLIdGenerator) Current() (int64, error) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
@@ -100,6 +108,7 @@ func (m *MySQLIdGenerator) Current() (int64, error) {
 	return m.cur, nil
 }
 
+// Next get next Id
 func (m *MySQLIdGenerator) Next() (int64, error) {
 	var id int64
 	var haveValue bool
@@ -107,6 +116,7 @@ func (m *MySQLIdGenerator) Next() (int64, error) {
 	updateIdSql := fmt.Sprintf(UpdateIdSQLFormat, m.key, m.batch)
 	m.lock.Lock()
 	defer m.lock.Unlock()
+
 	if m.batchMax < m.cur+1 {
 		tx, err := m.db.Begin()
 		if err != nil {
@@ -115,33 +125,46 @@ func (m *MySQLIdGenerator) Next() (int64, error) {
 
 		rows, err := tx.Query(selectForUpdate)
 		if err != nil {
-			tx.Rollback()
+			if err = tx.Rollback(); err != nil {
+				return 0, err
+			}
 			return 0, err
 		}
+
 		defer rows.Close()
 		for rows.Next() {
 			err := rows.Scan(&id)
 			if err != nil {
-				tx.Rollback()
+				if err = tx.Rollback(); err != nil {
+					return 0, err
+				}
 				return 0, err
 			}
 			haveValue = true
 		}
-		//When the idgo table has no id key
+
+		// When the idgo table has no id key
 		if haveValue == false {
 			return 0, fmt.Errorf("%s:have no id key", m.key)
 		}
 		_, err = tx.Exec(updateIdSql)
 		if err != nil {
-			tx.Rollback()
+			if err = tx.Rollback(); err != nil {
+				return 0, err
+			}
 			return 0, err
 		}
-		tx.Commit()
 
-		//batchMax is larger than cur BatchCount
+		err = tx.Commit()
+		if err != nil {
+			return 0, err
+		}
+
+		// batchMax is larger than cur BatchCount
 		m.batchMax = id + BatchCount
 		m.cur = id
 	}
+
 	m.cur++
 	return m.cur, nil
 }
@@ -160,8 +183,8 @@ func (m *MySQLIdGenerator) Init() error {
 	return nil
 }
 
-//if force is true, create table directly
-//if force is false, create table use CreateTableNTSQLFormat
+// if force is true, create table directly
+// if force is false, create table use CreateTableNTSQLFormat
 func (m *MySQLIdGenerator) Reset(idOffset int64, force bool) error {
 	var err error
 	createTableSQL := fmt.Sprintf(CreateTableSQLFormat, m.key)
@@ -186,12 +209,14 @@ func (m *MySQLIdGenerator) Reset(idOffset int64, force bool) error {
 		if err != nil {
 			return err
 		}
-		//check the idgo value if exist
+
+		// check the idgo value if exist
 		getRowCountSQL := fmt.Sprintf(GetRowCountSQLFormat, m.key)
 		rows, err := m.db.Query(getRowCountSQL)
 		if err != nil {
 			return err
 		}
+
 		defer rows.Close()
 		for rows.Next() {
 			err := rows.Scan(&rowCount)
@@ -213,14 +238,18 @@ func (m *MySQLIdGenerator) Reset(idOffset int64, force bool) error {
 	insertIdSQL := fmt.Sprintf(InsertIdSQLFormat, m.key, idOffset)
 	_, err = m.db.Exec(insertIdSQL)
 	if err != nil {
-		m.db.Exec(dropTableSQL)
+		if _, err1 := m.db.Exec(dropTableSQL); err1 != nil {
+			return err1
+		}
 		return err
 	}
+
 	m.cur = idOffset
 	m.batchMax = m.cur
 	return nil
 }
 
+// DelKeyTable delete key table
 func (m *MySQLIdGenerator) DelKeyTable(key string) error {
 	dropTableSQL := fmt.Sprintf(DropTableSQLFormat, key)
 
@@ -228,8 +257,5 @@ func (m *MySQLIdGenerator) DelKeyTable(key string) error {
 	defer m.lock.Unlock()
 
 	_, err := m.db.Exec(dropTableSQL)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
