@@ -14,7 +14,7 @@ import (
 	"github.com/flike/idgo/server"
 )
 
-var configFile = flag.String("config", "config/idgo.toml", "idgo config file")
+var configFile = flag.String("config", "config/config.toml", "id generator service config file")
 var logLevel = flag.String("log-level", "error", "log level [debug|info|warn|error], default error")
 
 const (

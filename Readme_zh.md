@@ -45,9 +45,9 @@ idgo目前只支持四个redis命令：
 3. `cd idgo`
 4. `go mod tidy`
 6. 设置配置文件
-7. 运行idgo: `./bin/idgo -config=etc/idgo.toml`
+7. 运行idgo: `./bin/idgo -config=etc/config.toml`
 
-设置配置文件(`config/idgo.toml`):
+设置配置文件(`config/config.toml`):
 
 ```
 #idgo的IP和port
@@ -69,7 +69,7 @@ max_idle_conns=64
 
 ```
 #启动idgo
-➜  idgo git:(master) ✗ ./bin/idgo -config=config/idgo.toml
+➜  idgo git:(master) ✗ ./bin/idgo -config=config/config.toml
 2016/04/07 11:51:20 - INFO - server.go:[62] - [server] "NewServer" "Server running" "netProto=tcp|address=127.0.0.1:6389" req_id=0
 2016/04/07 11:51:20 - INFO - main.go:[80] - [main] "main" "Idgo start!" "" req_id=0
 

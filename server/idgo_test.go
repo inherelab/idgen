@@ -15,7 +15,7 @@ func init() {
 	var err error
 
 	// load config
-	cfg, err = ParseConfigFile("../config/idgo.toml")
+	cfg, err = ParseConfigFile("../config/config.toml")
 	if err != nil {
 		panic(err.Error())
 	}

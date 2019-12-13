@@ -41,9 +41,9 @@ Install idgo following these steps:
 4. `cd idgo`
 5. `go mod tidy`
 7. set the config file.
-8. run idgo: `./bin/idgo -config=etc/idgo.toml`
+8. run idgo: `./bin/idgo -config=etc/config.toml`
 
-Set the config file(`config/idgo.toml`):
+Set the config file(`config/config.toml`):
 
 ```
 #the address of idgo
@@ -64,7 +64,7 @@ Examples:
 
 ```
 #start idgo
-➜  idgo git:(master) ✗ ./bin/idgo -config=config/idgo.toml
+➜  idgo git:(master) ✗ ./bin/idgo -config=config/config.toml
 2016/04/07 11:51:20 - INFO - server.go:[62] - [server] "NewServer" "Server running" "netProto=tcp|address=127.0.0.1:6389" req_id=0
 2016/04/07 11:51:20 - INFO - main.go:[80] - [main] "main" "Idgo start!" "" req_id=0
 

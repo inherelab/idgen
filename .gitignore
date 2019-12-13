@@ -2,7 +2,7 @@ bin
 pkg
 .DS_Store
 y.output
-.idea
+.idea/
 *.iml
 build_config.mk
 
