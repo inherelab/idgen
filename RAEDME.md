@@ -1,5 +1,5 @@
-## 1. Overview [中文主页](Readme_zh.md)
-[![Build Status](https://travis-ci.org/flike/idgo.svg?branch=master)](https://travis-ci.org/flike/idgo)
+## 1. Overview [中文主页](README.zh-CN.md)
+[![Build Status](https://travis-ci.org/inherelab/idgo.svg?branch=master)](https://travis-ci.org/inherelab/idgo)
 
 Idgo is a sequential id generator which can generate batch ids through MySQL transcation way. Its features as follows:
 
@@ -34,26 +34,22 @@ Idgo only supports four commands of redis as follows:
 
 ## 3. Install and use idgo
 
-Install idgo following these steps:
+Install following these steps:
 
-```
-	1. Install Go environment, the version of Go   
-is greater than 1.3.
-	2. Install godep. `go get github.com/tools/godep`. 
-	3. git clone https://github.com/flike/idgo src/github.com/flike/idgo
-	4. cd src/github.com/flike/idgo
-	5. source ./dev.sh
-	6. make
-	7. set the config file.
- 	8. run idgo. `./bin/idgo -config=etc/idgo.toml`
+1. Install Go environment, the version of Go >= `1.12`.
+3. git clone https://github.com/inherelab/idgo
+4. cd idgo
+4. Install deps by `go mod tidy`
+6. make
+7. set the config file.
+8. run idgo. `./bin/idgo -config=etc/idgo.toml`
 
-```
 Set the config file(etc/idgo.toml):
 
-```
-#the address of idgo
+```ini
+# the address of idgo
 addr="127.0.0.1:6389"
-#log_path: /Users/flike/src 
+# log_path: /Users/flike/src 
 log_level="debug"
 
 [storage_db]
@@ -63,7 +59,6 @@ db_name="idgo_test"
 user="root"
 password=""
 max_idle_conns=64
-
 ```
 
 Examples:

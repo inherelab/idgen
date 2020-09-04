@@ -6,13 +6,12 @@ import (
 	"os"
 	"os/signal"
 	"path"
-	"runtime"
 	"strings"
 	"syscall"
 
 	"github.com/flike/golog"
-	"github.com/flike/idgo/config"
-	"github.com/flike/idgo/server"
+	"github.com/inherelab/idgo/config"
+	"github.com/inherelab/idgo/server"
 )
 
 var configFile *string = flag.String("config", "etc/idgo.toml", "idgo config file")
@@ -24,7 +23,6 @@ const (
 )
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
 	flag.Parse()
 
 	if len(*configFile) == 0 {
@@ -38,7 +36,7 @@ func main() {
 		return
 	}
 
-	//when the log file size greater than 1GB, kingtask will generate a new file
+	// when the log file size greater than 1GB, kingtask will generate a new file
 	if len(cfg.LogPath) != 0 {
 		sysFilePath := path.Join(cfg.LogPath, sysLogName)
 		sysFile, err := golog.NewRotatingFileHandler(sysFilePath, MaxLogSize, 1)

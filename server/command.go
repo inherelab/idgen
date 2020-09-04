@@ -40,7 +40,7 @@ func (s *Server) handleGet(r *Request) Reply {
 	}
 }
 
-//redis command(set abc 12)
+// redis command(set abc 12)
 func (s *Server) handleSet(r *Request) Reply {
 	var idgen *MySQLIdGenerator
 	var ok bool
