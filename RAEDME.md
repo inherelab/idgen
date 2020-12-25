@@ -1,5 +1,5 @@
 ## 1. Overview [中文主页](README.zh-CN.md)
-[![Build Status](https://travis-ci.org/inherelab/idgo.svg?branch=master)](https://travis-ci.org/inherelab/idgo)
+
 
 Idgo is a sequential id generator which can generate batch ids through MySQL transcation way. Its features as follows:
 
@@ -13,7 +13,6 @@ Someone knows the resolution of generating id with MySQL:
 ```
 REPLACE INTO Tickets64 (stub) VALUES ('a');
 SELECT LAST_INSERT_ID();
-
 ```
 
 The disadvantage of this resolution is that generates one id need query MySQL once. When generating id too quickly, leading MySQL overload. This is why I build this project to generating ids.
@@ -36,15 +35,14 @@ Idgo only supports four commands of redis as follows:
 
 Install following these steps:
 
-1. Install Go environment, the version of Go >= `1.12`.
-3. git clone https://github.com/inherelab/idgo
-4. cd idgo
-4. Install deps by `go mod tidy`
-6. make
+1. Install Go environment, the version of Go is greater than `1.12`.
+3. `git clone https://github.com/flike/idgo idgo`
+4. `cd idgo`
+5. `go mod tidy`
 7. set the config file.
-8. run idgo. `./bin/idgo -config=etc/idgo.toml`
+8. run idgo: `./bin/idgo -config=etc/config.toml`
 
-Set the config file(etc/idgo.toml):
+Set the config file(`config/config.toml`):
 
 ```ini
 # the address of idgo
@@ -64,9 +62,8 @@ max_idle_conns=64
 Examples:
 
 ```
-
 #start idgo
-➜  idgo git:(master) ✗ ./bin/idgo -config=etc/idgo.toml
+➜  idgo git:(master) ✗ ./bin/idgo -config=config/config.toml
 2016/04/07 11:51:20 - INFO - server.go:[62] - [server] "NewServer" "Server running" "netProto=tcp|address=127.0.0.1:6389" req_id=0
 2016/04/07 11:51:20 - INFO - main.go:[80] - [main] "main" "Idgo start!" "" req_id=0
 
@@ -84,7 +81,6 @@ redis 127.0.0.1:6389> get abc
 (integer) 103
 redis 127.0.0.1:6389> get abc
 (integer) 104
-
 ```
 
 ## 4. HA

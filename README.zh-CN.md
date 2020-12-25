@@ -1,5 +1,10 @@
 # idgo 简介
+<<<<<<< HEAD:README.zh-CN.md
 [![Build Status](https://travis-ci.org/inherelab/idgo.svg?branch=master)](https://travis-ci.org/inherelab/idgo)
+=======
+
+[![Build Status](https://travis-ci.org/flike/idgo.svg?branch=master)](https://travis-ci.org/flike/idgo)
+>>>>>>> 921ebe4ac30274df5a4eb9588a844d3a9b27bda1:Readme_zh.md
 
 ## 1. idgo特点
 
@@ -38,6 +43,7 @@ idgo目前只支持四个redis命令：
 
 ## 3. 安装和使用idgo
 
+<<<<<<< HEAD:README.zh-CN.md
 1. 安装idgo
 
 1. 安装Go语言环境（Go版本1.12以上），具体步骤请Google。
@@ -47,9 +53,18 @@ idgo目前只支持四个redis命令：
 5. make
 6. 设置配置文件
 7. 运行idgo。./bin/idgo -config=etc/idgo.toml
+=======
+安装idgo:
+>>>>>>> 921ebe4ac30274df5a4eb9588a844d3a9b27bda1:Readme_zh.md
 
+1. 安装Go语言环境（Go版本1.11以上），具体步骤请Google。
+2. `git clone https://github.com/flike/idgo idgo`
+3. `cd idgo`
+4. `go mod tidy`
+6. 设置配置文件
+7. 运行idgo: `./bin/idgo -config=etc/config.toml`
 
-设置配置文件(`etc/idgo.toml`):
+设置配置文件(`config/config.toml`):
 
 ```ini
 #idgo的IP和port
@@ -71,7 +86,7 @@ max_idle_conns=64
 
 ```
 #启动idgo
-➜  idgo git:(master) ✗ ./bin/idgo -config=etc/idgo.toml
+➜  idgo git:(master) ✗ ./bin/idgo -config=config/config.toml
 2016/04/07 11:51:20 - INFO - server.go:[62] - [server] "NewServer" "Server running" "netProto=tcp|address=127.0.0.1:6389" req_id=0
 2016/04/07 11:51:20 - INFO - main.go:[80] - [main] "main" "Idgo start!" "" req_id=0
 

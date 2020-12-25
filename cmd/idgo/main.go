@@ -10,18 +10,26 @@ import (
 	"syscall"
 
 	"github.com/flike/golog"
+<<<<<<< HEAD
 	"github.com/inherelab/idgo/config"
 	"github.com/inherelab/idgo/server"
+=======
+	"github.com/flike/idgo/server"
+>>>>>>> 921ebe4ac30274df5a4eb9588a844d3a9b27bda1
 )
 
-var configFile *string = flag.String("config", "etc/idgo.toml", "idgo config file")
-var logLevel *string = flag.String("log-level", "", "log level [debug|info|warn|error], default error")
+var configFile = flag.String("config", "config/config.toml", "id generator service config file")
+var logLevel = flag.String("log-level", "error", "log level [debug|info|warn|error], default error")
 
 const (
 	sysLogName = "sys.log"
 	MaxLogSize = 1024 * 1024 * 1024
 )
 
+// Local run:
+// 	go run ./cmd/idgo/main.go --log-level debug
+// Bench test:
+// 	go test -bench Gen ./server
 func main() {
 	flag.Parse()
 
@@ -30,7 +38,7 @@ func main() {
 		return
 	}
 
-	cfg, err := config.ParseConfigFile(*configFile)
+	cfg, err := server.ParseConfigFile(*configFile)
 	if err != nil {
 		fmt.Printf("parse config file error:%v\n", err.Error())
 		return
@@ -53,29 +61,36 @@ func main() {
 		setLogLevel(cfg.LogLevel)
 	}
 
+	err = startAndRunServer(cfg)
+	if err != nil {
+		golog.Error("main", "main", err.Error(), 0)
+		golog.GlobalLogger.Close()
+		fmt.Println(err.Error())
+	}
+}
+
+func startAndRunServer(cfg *server.Config) (err error) {
 	var s *server.Server
-	s, err = server.NewServer(cfg)
+
+	// set config
+	server.SetConfig(cfg)
+
+	// create server
+	s, err = server.NewServer()
 	if err != nil {
-		golog.Error("main", "main", err.Error(), 0)
-		golog.GlobalLogger.Close()
 		s.Close()
 		return
 	}
 
-	err = s.Init()
-	if err != nil {
-		golog.Error("main", "main", err.Error(), 0)
-		golog.GlobalLogger.Close()
+	// init server
+	if err = s.Init(); err != nil {
 		s.Close()
 		return
 	}
 
+	// listen signals
 	sc := make(chan os.Signal, 1)
-	signal.Notify(sc,
-		syscall.SIGHUP,
-		syscall.SIGINT,
-		syscall.SIGTERM,
-		syscall.SIGQUIT)
+	signal.Notify(sc, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
 	go func() {
 		sig := <-sc
@@ -83,8 +98,9 @@ func main() {
 		golog.GlobalLogger.Close()
 		s.Close()
 	}()
-	golog.Info("main", "main", "Idgo start!", 0)
-	s.Serve()
+
+	// server run
+	return s.Serve()
 }
 
 func setLogLevel(level string) {
