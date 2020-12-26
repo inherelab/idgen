@@ -1,8 +1,5 @@
-bin
-pkg
 .DS_Store
-y.output
 .idea/
-*.iml
+*.log
+*.tmp
 build_config.mk
-
