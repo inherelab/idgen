@@ -67,9 +67,7 @@ max_idle_conns=64
 
 ```
 # 启动genid
-➜  genid git:(master) ✗ ./bin/genid -config=config/config.toml
-2016/04/07 11:51:20 - INFO - server.go:[62] - [server] "NewServer" "Server running" "netProto=tcp|address=127.0.0.1:6389" req_id=0
-2016/04/07 11:51:20 - INFO - main.go:[80] - [main] "main" "Idgo start!" "" req_id=0
+➜  genid git:(master) ✗ ./bin/genid redis -config=config/config.toml
 
 #启动一个客户端连接genid
 ➜  ~  redis-cli -p 6389
