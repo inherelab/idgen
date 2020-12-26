@@ -1,9 +1,12 @@
 package server
 
 import (
+	"database/sql"
+	"fmt"
 	"io/ioutil"
 
 	"github.com/BurntSushi/toml"
+	"github.com/gookit/slog"
 )
 
 // Config struct
@@ -17,7 +20,7 @@ type Config struct {
 	TableName   string `toml:"table_name"`
 	TablePrefix string `toml:"table_prefix"`
 	// db config
-	DbConfig *DBConfig `toml:"storage_db"`
+	DbConfig *DBConfig `toml:"db"`
 }
 
 // DBConfig mysql db config struct
@@ -34,6 +37,28 @@ type DBConfig struct {
 var cfg = &Config{
 	TableName:   "gid_keys",
 	TablePrefix: "gid_key_",
+}
+
+// CreateSqlDB
+func (c *Config) CreateSqlDB() (*sql.DB, error) {
+	// init db
+	proto := "mysql"
+	charset := "utf8"
+
+	// eg: "root:@tcp(127.0.0.1:3306)/test?charset=utf8"
+	cfg := c.DbConfig
+	url := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s",
+		cfg.User,
+		cfg.Password,
+		cfg.Host,
+		cfg.Port,
+		cfg.DBName,
+		charset,
+	)
+
+	slog.Infof("init mysqlId DB connection, host:%s db:%s", cfg.Host, cfg.DBName)
+
+	return sql.Open(proto, url)
 }
 
 // SetConfig set config

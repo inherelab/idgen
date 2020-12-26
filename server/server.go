@@ -7,11 +7,7 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/flike/golog"
-<<<<<<< HEAD
-	"github.com/inherelab/idgo/config"
-=======
->>>>>>> 921ebe4ac30274df5a4eb9588a844d3a9b27bda1
+	"github.com/gookit/slog"
 )
 
 const (
@@ -56,12 +52,6 @@ func NewServer() (*Server, error) {
 
 	s := new(Server)
 
-<<<<<<< HEAD
-	var err error
-	// init db
-	proto := "mysql"
-	charset := "utf8"
-=======
 	// open db
 	err = s.openDbConn()
 
@@ -74,7 +64,6 @@ func (s *Server) openDbConn() (err error) {
 	proto := "mysql"
 	charset := "utf8"
 
->>>>>>> 921ebe4ac30274df5a4eb9588a844d3a9b27bda1
 	// root:@tcp(127.0.0.1:3306)/test?charset=utf8
 	url := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s",
 		cfg.DbConfig.User,
@@ -160,7 +149,7 @@ func (s *Server) Serve() (err error) {
 	for s.running {
 		conn, err := s.tcpListener.Accept()
 		if err != nil {
-			golog.Error("server", "Run", err.Error(), 0)
+			slog.Error("server", "Run", err.Error(), 0)
 			continue
 		}
 
@@ -179,7 +168,7 @@ func (s *Server) onConn(conn net.Conn) error {
 			const size = 4096
 			buf := make([]byte, size)
 			buf = buf[:runtime.Stack(buf, false)] // 获得当前goroutine的stacktrace
-			golog.Error("server", "onConn", "error", 0,
+			slog.Error("server", "onConn", "error", 0,
 				"remoteAddr", clientAddr,
 				"stack", string(buf),
 				"err", err.Error(),
@@ -201,7 +190,7 @@ func (s *Server) onConn(conn net.Conn) error {
 
 		reply := s.ServeRequest(request)
 		if _, err := reply.WriteTo(conn); err != nil {
-			golog.Error("server", "onConn", "reply write error", 0,
+			slog.Error("server", "onConn", "reply write error", 0,
 				"err", err.Error())
 			return err
 		}
@@ -232,7 +221,7 @@ func (s *Server) Close() {
 		s.tcpListener.Close()
 	}
 
-	golog.Info("server", "close", "server closed!", 0)
+	slog.Info("server", "close", "server closed!", 0)
 }
 
 func (s *Server) IsKeyExist(key string) (bool, error) {
@@ -325,9 +314,9 @@ func (s *Server) DelKey(key string) error {
 }
 
 func logInfo(method, msg string, args ...interface{})  {
-	golog.Info("Server", method, msg, 0, args...)
+	slog.Info("Server", method, msg, 0, args...)
 }
 
 func logError(method, msg string, args ...interface{})  {
-	golog.Error("Server", method, msg, 0, args...)
+	slog.Error("Server", method, msg, 0, args...)
 }
