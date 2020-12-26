@@ -1,5 +1,6 @@
-## 1. Overview [中文主页](README.zh-CN.md)
-
+# Global ID
+ 
+> Inspired the projects [flike/idgo](https://github.com/flike/idgo) 
 
 Idgo is a sequential id generator which can generate batch ids through MySQL transcation way. Its features as follows:
 
@@ -16,6 +17,9 @@ SELECT LAST_INSERT_ID();
 ```
 
 The disadvantage of this resolution is that generates one id need query MySQL once. When generating id too quickly, leading MySQL overload. This is why I build this project to generating ids.
+
+## [中文说明](README.zh-CN.md)
+
 
 ## 2. The architecture of idgo
 

@@ -1,4 +1,4 @@
-package server
+package genid
 
 import (
 	"database/sql"

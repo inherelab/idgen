@@ -1,4 +1,4 @@
-module github.com/inherelab/idgo
+module github.com/inherelab/genid
 
 go 1.13
 

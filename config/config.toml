@@ -13,11 +13,11 @@ table_name="gid_keys"
 table_prefix="gid_key_"
 batch_count=30000
 
-[storage_db]
-host="47.108.133.21"
+[db]
+host="127.0.0.1"
 port=6033
 user="root"
-password="riC%sdsdsD^^68$##rwwdPTO%a6s&a"
+password="123456"
 db_name="test"
 # db settings
 max_idle_conns=64

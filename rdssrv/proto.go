@@ -1,4 +1,4 @@
-package server
+package rdssrv
 
 import (
 	"bufio"
@@ -7,9 +7,11 @@ import (
 	"io/ioutil"
 	"strconv"
 	"strings"
+
+	"github.com/gookit/goutil/strutil"
 )
 
-// Request struct definition
+// Request struct
 type Request struct {
 	Command       string
 	Arguments     [][]byte
@@ -17,32 +19,53 @@ type Request struct {
 	Connection    io.ReadCloser
 }
 
-// HasArgument check
+// HasArgument check by index
 func (r *Request) HasArgument(index int) bool {
 	return index >= 0 && index < len(r.Arguments)
 }
 
-// ExpectArgument check
 func (r *Request) ExpectArgument(index int) *ErrorReply {
 	if !r.HasArgument(index) {
 		return ErrNotEnoughArgs
 	}
+
 	return nil
 }
 
-// GetInt get int
+// GetString by index
+func (r *Request) GetString(index int) (string, *ErrorReply) {
+	if index >= 0 && index < len(r.Arguments) {
+		return string(r.Arguments[index]), nil
+	}
+
+	return "", ErrNotEnoughArgs
+}
+
+// GetBool by index
+func (r *Request) GetBool(index int) (bool, *ErrorReply) {
+	if index >= 0 && index < len(r.Arguments) {
+		str := string(r.Arguments[index])
+		return strutil.MustBool(str), nil
+	}
+
+	return false, ErrNotEnoughArgs
+}
+
+// GetInt by index
 func (r *Request) GetInt(index int) (int64, *ErrorReply) {
 	if errReply := r.ExpectArgument(index); errReply != nil {
 		return -1, errReply
 	}
-	if n, err := strconv.ParseInt(string(r.Arguments[index]), 10, 64); err != nil {
+
+	n, err := strconv.ParseInt(string(r.Arguments[index]), 10, 64)
+	if err != nil {
 		return -1, ErrExpectInteger
-	} else {
-		return n, nil
 	}
+
+	return n, nil
 }
 
-// NewRequest new request from connection
+// NewRequest from connection
 func NewRequest(conn io.ReadCloser) (*Request, error) {
 	reader := bufio.NewReader(conn)
 
@@ -100,9 +123,11 @@ func readArgument(reader *bufio.Reader) ([]byte, error) {
 	if len(data) != argLength {
 		return nil, MalformedLength(argLength, len(data))
 	}
+
 	if b, err := reader.ReadByte(); err != nil || b != '\r' {
 		return nil, MalformedMissingCRLF()
 	}
+
 	if b, err := reader.ReadByte(); err != nil || b != '\n' {
 		return nil, MalformedMissingCRLF()
 	}
@@ -111,36 +136,34 @@ func readArgument(reader *bufio.Reader) ([]byte, error) {
 }
 
 func Malformed(expected string, got string) error {
-	return fmt.Errorf("mailformed request: %s does not match %s", got, expected)
+	return fmt.Errorf("Mailformed request: %s does not match %s", got, expected)
 }
 
 func MalformedLength(expected int, got int) error {
-	return fmt.Errorf("mailformed request: argument length %d does not match %d", got, expected)
+	return fmt.Errorf("Mailformed request: argument length %d does not match %d", got, expected)
 }
 
 func MalformedMissingCRLF() error {
-	return fmt.Errorf("mailformed request: line should end with CRLF")
+	return fmt.Errorf("Mailformed request: line should end with CRLF")
 }
 
-// Reply definition
+// Reply writer
 type Reply io.WriterTo
 
 var (
-	ErrMethodNotSupported = &ErrorReply{"Method is not supported"}
-
-	ErrNotEnoughArgs   = &ErrorReply{"Not enough arguments for the command"}
-	ErrTooMuchArgs     = &ErrorReply{"Too many arguments for the command"}
-	ErrWrongArgsNumber = &ErrorReply{"Wrong number of arguments"}
-	ErrExpectInteger   = &ErrorReply{"Expected integer"}
-	ErrExpectMorePair  = &ErrorReply{"Expected at least one key val pair"}
-	ErrExpectEvenPair  = &ErrorReply{"Got uneven number of key val pairs"}
-
-	ErrExpectPositiveInteger = &ErrorReply{"Expected positive integer"}
+	ErrMethodNotSupported   = &ErrorReply{"Method is not supported. allow: GET,SET,DEL,EXISTS,SELECT"}
+	ErrNotEnoughArgs        = &ErrorReply{"Not enough arguments for the command"}
+	ErrTooMuchArgs          = &ErrorReply{"Too many arguments for the command"}
+	ErrWrongArgsNumber      = &ErrorReply{"Wrong number of arguments"}
+	ErrExpectInteger        = &ErrorReply{"Expected integer"}
+	ErrExpectPositivInteger = &ErrorReply{"Expected positive integer"}
+	ErrExpectMorePair       = &ErrorReply{"Expected at least one key val pair"}
+	ErrExpectEvenPair       = &ErrorReply{"Got uneven number of key val pairs"}
 
 	ErrNoKey = &ErrorReply{"no key for set"}
 )
 
-// ErrorReply struct definition
+// ErrorReply struct
 type ErrorReply struct {
 	message string
 }
@@ -154,6 +177,7 @@ func (er *ErrorReply) Error() string {
 	return er.message
 }
 
+// StatusReply struct
 type StatusReply struct {
 	code string
 }
@@ -163,6 +187,7 @@ func (r *StatusReply) WriteTo(w io.Writer) (int64, error) {
 	return int64(n), err
 }
 
+// IntReply struct
 type IntReply struct {
 	number int64
 }
@@ -172,6 +197,7 @@ func (r *IntReply) WriteTo(w io.Writer) (int64, error) {
 	return int64(n), err
 }
 
+// BulkReply struct
 type BulkReply struct {
 	value []byte
 }
@@ -180,6 +206,7 @@ func (r *BulkReply) WriteTo(w io.Writer) (int64, error) {
 	return writeBytes(r.value, w)
 }
 
+// MultiBulkReply struct
 type MultiBulkReply struct {
 	values [][]byte
 }
@@ -212,7 +239,6 @@ func writeBytes(value interface{}, w io.Writer) (int64, error) {
 	if value == nil {
 		return writeNullBytes(w)
 	}
-
 	switch v := value.(type) {
 	case []byte:
 		if len(v) == 0 {
@@ -230,6 +256,5 @@ func writeBytes(value interface{}, w io.Writer) (int64, error) {
 		wrote, err := w.Write([]byte(":" + strconv.Itoa(v) + "\r\n"))
 		return int64(wrote), err
 	}
-
-	return 0, fmt.Errorf("invalid type sent to WriteBytes")
+	return 0, fmt.Errorf("Invalid type sent to WriteBytes")
 }
