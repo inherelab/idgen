@@ -1,114 +1,22 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-	"os"
-	"os/signal"
-	"path"
-	"strings"
-	"syscall"
-
-	"github.com/gookit/slog"
-	"github.com/inherelab/idgo/config"
-	"github.com/inherelab/idgo/server"
-)
-
-var configFile = flag.String("config", "config/config.toml", "id generator service config file")
-var logLevel = flag.String("log-level", "error", "log level [debug|info|warn|error], default error")
-
-const (
-	sysLogName = "sys.log"
-	MaxLogSize = 1024 * 1024 * 1024
+	"github.com/gookit/gcli/v2"
+	"github.com/inherelab/genid/cmd"
 )
 
 // Local run:
-// 	go run ./cmd/idgo/main.go --log-level debug
+// 	go run ./cmd/genid/main.go --log-level debug
 // Bench test:
-// 	go test -bench Gen ./server
+// 	go test -bench Gen ./mysqlid
 func main() {
-	flag.Parse()
+	app := gcli.NewApp(func(app *gcli.App) {
+		app.Name = "ID Generator"
+		app.Version = "1.0.1"
+		app.Description = "this is Id generator console application"
+	})
 
-	if len(*configFile) == 0 {
-		fmt.Println("must use a config file")
-		return
-	}
+	app.Add(cmd.HttpServeCommand, cmd.RdsServeCommand)
 
-	cfg, err := server.ParseConfigFile(*configFile)
-	if err != nil {
-		fmt.Printf("parse config file error:%v\n", err.Error())
-		return
-	}
-
-	// when the log file size greater than 1GB, kingtask will generate a new file
-	if len(cfg.LogPath) != 0 {
-		// sysFilePath := path.Join(cfg.LogPath, sysLogName)
-		// sysFile, err := slog.NewRotateFileHandler(sysFilePath, MaxLogSize, 1)
-		// if err != nil {
-		// 	fmt.Printf("new log file error:%v\n", err.Error())
-		// 	return
-		// }
-		// slog.GlobalLogger = slog.New(sysFile, slog.Lfile|slog.Ltime|slog.Llevel)
-	}
-
-	if *logLevel != "" {
-		setLogLevel(*logLevel)
-	} else {
-		setLogLevel(cfg.LogLevel)
-	}
-
-	err = startAndRunServer(cfg)
-	if err != nil {
-		slog.Error("main", "main", err.Error(), 0)
-		fmt.Println(err.Error())
-	}
-}
-
-func startAndRunServer(cfg *server.Config) (err error) {
-	var s *server.Server
-
-	// set config
-	server.SetConfig(cfg)
-
-	// create server
-	s, err = server.NewServer()
-	if err != nil {
-		s.Close()
-		return
-	}
-
-	// init server
-	if err = s.Init(); err != nil {
-		s.Close()
-		return
-	}
-
-	// listen signals
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-
-	go func() {
-		sig := <-sc
-		slog.Info("main", "main", "Got signal", 0, "signal", sig)
-		slog.Flush()
-		s.Close()
-	}()
-
-	// server run
-	return s.Serve()
-}
-
-func setLogLevel(level string) {
-	switch strings.ToLower(level) {
-	case "debug":
-		slog.GlobalLogger.SetLevel(slog.LevelDebug)
-	case "info":
-		slog.GlobalLogger.SetLevel(slog.LevelInfo)
-	case "warn":
-		slog.GlobalLogger.SetLevel(slog.LevelWarn)
-	case "error":
-		slog.GlobalLogger.SetLevel(slog.LevelError)
-	default:
-		slog.GlobalLogger.SetLevel(slog.LevelError)
-	}
+	app.Run()
 }

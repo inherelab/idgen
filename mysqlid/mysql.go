@@ -15,9 +15,9 @@ var cfg = &Config{
 // Config struct
 type Config struct {
 	// the server listen addr
-	Addr        string `toml:"addr"`
-	LogPath     string `toml:"log_path"`
-	LogLevel    string `toml:"log_level"`
+	Addr     string `toml:"addr"`
+	LogPath  string `toml:"log_path"`
+	LogLevel string `toml:"log_level"`
 
 	BatchCount  int64  `toml:"batch_count"`
 	TableMode   string `toml:"table_mode"`

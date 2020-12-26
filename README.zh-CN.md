@@ -1,19 +1,14 @@
-# idgo 简介
-<<<<<<< HEAD:README.zh-CN.md
-[![Build Status](https://travis-ci.org/inherelab/idgo.svg?branch=master)](https://travis-ci.org/inherelab/idgo)
-=======
+# Gen ID
 
-[![Build Status](https://travis-ci.org/flike/idgo.svg?branch=master)](https://travis-ci.org/flike/idgo)
->>>>>>> 921ebe4ac30274df5a4eb9588a844d3a9b27bda1:Readme_zh.md
+## 特点
 
-## 1. idgo特点
+genid 是一个利用MySQL批量生成ID的ID生成器, 主要有以下特点:
 
-idgo 是一个利用MySQL批量生成ID的ID生成器, 主要有以下特点:
-
-- 生成的ID是顺序递增的。
+- 生成的ID是顺序递增的
 - 每次通过事务批量取ID,性能较高,且不会对MySQL造成压力。
 - 当ID生成器服务崩溃后,可以继续生成有效ID,避免了ID回绕的风险。
-- 服务端模拟Redis协议，通过`GET`和`SET`获取和设置key。不必开发专门的获取ID的SDK，直接使用Reids的SDK就可。
+- 服务端模拟Redis协议，通过`GET`和`SET`获取和设置key。_不必开发专门的获取ID的SDK，直接使用Redis的SDK就可_
+- 服务端同时支持Http协议提供服务。
 
 业界已经有利于MySQL生成ID的方案,都是通过:
 
@@ -22,15 +17,14 @@ REPLACE INTO Tickets64 (stub) VALUES ('a');
 SELECT LAST_INSERT_ID();
 ```
 
-这种方式生成ID的弊端就是每生成一个ID都需要查询一下MySQL,当ID生成过快时会对MySQL造成很大的压力。这正式我开发这个项目的原因。服务端兼容Redis协议是为了避免单独开发和idgo通信的SDK。
+这种方式生成ID的弊端就是每生成一个ID都需要查询一下MySQL,当ID生成过快时会对MySQL造成很大的压力。这正式我开发这个项目的原因。
+服务端兼容Redis协议是为了避免单独开发和genid通信的SDK。
 
-## 2. idgo架构
+## 2. 架构
 
-idgo和前端应用是采用redis协议通信的，然后每个`id_key`是存储在MySQL数据库中，每个key会在MySQL中生成一张表，表中只有一条记录。这样做的目的是保证当idgo由于意外崩溃后，`id_key`对应的值不会丢失，这样就避免产生了id回绕的风险。
+genid 和前端应用是采用redis协议通信的，然后每个`id_key`是存储在MySQL数据库中，每个key会在MySQL中生成一张表，表中只有一条记录。这样做的目的是保证当genid由于意外崩溃后，`id_key`对应的值不会丢失，这样就避免产生了id回绕的风险。
 
-![idgo_arch](http://ww2.sinaimg.cn/large/6e5705a5gw1f2nz3bot3tj20qo0k0mxe.jpg)
-
-idgo目前只支持四个redis命令：
+目前支持四个redis命令：
 
 ```
 1. SET key value,通过这个操作设置id生成器的初始值。
@@ -41,42 +35,29 @@ idgo目前只支持四个redis命令：
 5. SELECT index,选择一个db，目前是一个假方法，没实现任何功能，只是为了避免初始化客户端时调用SELECT出错。
 ```
 
-## 3. 安装和使用idgo
-
-<<<<<<< HEAD:README.zh-CN.md
-1. 安装idgo
+## 安装和使用
 
 1. 安装Go语言环境（Go版本1.12以上），具体步骤请Google。
-2. git clone https://github.com/inherelab/idgo
-3. cd src/github.com/inherelab/idgo
+2. `git clone https://github.com/inherelab/genid`
+3. `cd genid`
 4. 安装依赖 `go mod tidy`
 5. make
 6. 设置配置文件
-7. 运行idgo。./bin/idgo -config=etc/idgo.toml
-=======
-安装idgo:
->>>>>>> 921ebe4ac30274df5a4eb9588a844d3a9b27bda1:Readme_zh.md
-
-1. 安装Go语言环境（Go版本1.11以上），具体步骤请Google。
-2. `git clone https://github.com/flike/idgo idgo`
-3. `cd idgo`
-4. `go mod tidy`
-6. 设置配置文件
-7. 运行idgo: `./bin/idgo -config=etc/config.toml`
+7. 运行genid `./bin/genid -config=config/config.toml`
 
 设置配置文件(`config/config.toml`):
 
 ```ini
-#idgo的IP和port
+# genid redis的IP和port
 addr="127.0.0.1:6389"
-#log_path: /Users/flike/src 
+#log_path: /Users/inhere/src 
 #日志级别
 log_level="debug"
 
 [storage_db]
 mysql_host="127.0.0.1"
 mysql_port=3306
-db_name="idgo_test"
+db_name="genid_test"
 user="root"
 password=""
 max_idle_conns=64
@@ -85,12 +66,12 @@ max_idle_conns=64
 操作演示：
 
 ```
-#启动idgo
-➜  idgo git:(master) ✗ ./bin/idgo -config=config/config.toml
+# 启动genid
+➜  genid git:(master) ✗ ./bin/genid -config=config/config.toml
 2016/04/07 11:51:20 - INFO - server.go:[62] - [server] "NewServer" "Server running" "netProto=tcp|address=127.0.0.1:6389" req_id=0
 2016/04/07 11:51:20 - INFO - main.go:[80] - [main] "main" "Idgo start!" "" req_id=0
 
-#启动一个客户端连接idgo
+#启动一个客户端连接genid
 ➜  ~  redis-cli -p 6389
 redis 127.0.0.1:6389> get abc
 (integer) 0
@@ -124,7 +105,7 @@ redis 127.0.0.1:6389>
 
 ## 5.ID生成服务宕机后的恢复方案
 
-当idgo服务意外宕机后，可以切从库，然后将idgo对应的key加上适当的偏移量。
+当genid服务意外宕机后，可以切从库，然后将genid对应的key加上适当的偏移量。
 
 # License
 

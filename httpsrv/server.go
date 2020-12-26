@@ -48,3 +48,16 @@ func (s *Server) Serve() error {
 
 	return nil
 }
+
+// Close server
+func (s *Server) Close() {
+	s.running = false
+	if s.hserver != nil {
+		err := s.hserver.Close()
+		if err != nil {
+			slog.Error(err)
+		}
+	}
+
+	slog.Info("redis server closed!")
+}

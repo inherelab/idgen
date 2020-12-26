@@ -25,13 +25,13 @@ type Config struct {
 
 // DBConfig mysql db config struct
 type DBConfig struct {
-	Host         string `toml:"host"`
-	Port         int    `toml:"port"`
-	User         string `toml:"user"`
-	Password     string `toml:"password"`
-	DBName       string `toml:"db_name"`
+	Host     string `toml:"host"`
+	Port     int    `toml:"port"`
+	User     string `toml:"user"`
+	Password string `toml:"password"`
+	DBName   string `toml:"db_name"`
 	// TODO db pool config
-	MaxIdleConns int    `toml:"max_idle_conns"`
+	MaxIdleConns int `toml:"max_idle_conns"`
 }
 
 var cfg = &Config{

@@ -80,7 +80,7 @@ func (s *Server) onConn(conn net.Conn) {
 		}
 
 		// TODO ignore error
-		_= conn.Close()
+		_ = conn.Close()
 	}()
 
 	for {

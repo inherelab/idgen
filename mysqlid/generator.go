@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS %s (
 	GetRowCountSQLFormat = "SELECT count(*) FROM `%s`"
 	// SHOW TABLES LIKE '%service_user%';
 	// SHOW TABLES WHERE Tables_in_{DB_NAME} = 'service_user';
-	GetKeySQLFormat      = "SHOW TABLES LIKE '%s'"
+	GetKeySQLFormat = "SHOW TABLES LIKE '%s'"
 
 	// 获取id的自增步长
 	BatchCount = 2000
@@ -39,15 +39,15 @@ CREATE TABLE IF NOT EXISTS %s (
 
 // Generator struct
 type Generator struct {
-	db   *sql.DB
+	db *sql.DB
 
 	// the service name. id generator name name.
 	name string
 	lock sync.Mutex
 
-	current int64 // current id
-	batchMax int64  // max id till get from mysql
-	batch    int64  // get batch count ids from mysql once
+	current  int64 // current id
+	batchMax int64 // max id till get from mysql
+	batch    int64 // get batch count ids from mysql once
 }
 
 func NewGenerator(db *sql.DB, serviceName string) (*Generator, error) {

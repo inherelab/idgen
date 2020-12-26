@@ -41,7 +41,7 @@ type Manager struct {
 	sync.RWMutex
 	db *sql.DB
 
-	initialized bool
+	initialized  bool
 	generatorMap map[string]*Generator
 }
 
@@ -190,7 +190,7 @@ func (s *Manager) SetKey(key string) error {
 	// service name record exists on manager table.
 	_, err := s.GetKey(key)
 	if err == nil {
-		  return nil
+		return nil
 	}
 	// if err != nil {
 	// 	return err
@@ -308,7 +308,7 @@ func (s *Manager) DelService(serviceName string) error {
 // Usage:
 //	SetServicesId("service_user", 2300)
 //	SetServicesId("service_user", 2300, true)
-func (s *Manager) SetServiceId(serviceName string, lastId int64, force bool) (int64,error) {
+func (s *Manager) SetServiceId(serviceName string, lastId int64, force bool) (int64, error) {
 	gen, err := s.GetOrNewGenerator(serviceName)
 	if err != nil {
 		return 0, err
@@ -327,7 +327,7 @@ func (s *Manager) SetServiceId(serviceName string, lastId int64, force bool) (in
 // SetServices set multi service latest ids
 // Usage:
 //	SetServices({"service_user": 2300, "service_order": 22300})
-func (s *Manager) SetMultiServices(kvMap map[string]int64, force bool) ( map[string]int64,  error) {
+func (s *Manager) SetMultiServices(kvMap map[string]int64, force bool) (map[string]int64, error) {
 	ret := make(map[string]int64, len(kvMap))
 	for name, lastId := range kvMap {
 		lid, err := s.SetServiceId(name, lastId, force)
@@ -397,7 +397,7 @@ func NextId(serviceName string) (int64, error) { return std.NextId(serviceName) 
 func CurrentId(serviceName string) (int64, error) { return std.CurrentId(serviceName) }
 
 // SetServiceId set service latest id
-func SetServiceId(serviceName string, lastId int64, force bool) (int64,error) {
+func SetServiceId(serviceName string, lastId int64, force bool) (int64, error) {
 	return std.SetServiceId(serviceName, lastId, force)
 }
 
