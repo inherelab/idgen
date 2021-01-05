@@ -7,12 +7,17 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gookit/config/v2"
+	"github.com/gookit/config/v2/toml"
+	"github.com/gookit/config/v2/yaml"
 )
 
 var wg sync.WaitGroup
 
 func init() {
 	var err error
+
+	config.AddDriver(toml.Driver)
+	config.AddDriver(yaml.Driver)
 
 	// load config
 	err = config.LoadFiles("../config/config.toml")
