@@ -24,8 +24,8 @@ github.com/gookit/goutil v0.3.6/go.mod h1:2cDvnlRuL480AYH6YiMI/uOIfaEAWd/vK4SJAE
 github.com/gookit/goutil v0.3.7 h1:D1c1mENyZ7pR3MWlBzDgaIKgpBDes0iY07WDIB9DuIw=
 github.com/gookit/goutil v0.3.7/go.mod h1:tPwx/BlEuzR3eTAbUPDqkZvjwWky22GFqvgmNYSCyac=
 github.com/gookit/ini/v2 v2.0.7/go.mod h1:uC/QJDgoCqmOVwgBWPskZJQM5tvkmAi3xFrog2i+9IY=
-github.com/gookit/slog v0.0.8 h1:HSISbIZ+2pR3FCNKixPrjDI576n1T7bSXbSVpIX+E0U=
-github.com/gookit/slog v0.0.8/go.mod h1:s6iIv6LvCOxBwpPX0Q1AvVz6DyoS4lB9fPBbsolRP0w=
+github.com/gookit/slog v0.1.2 h1:n1mGN1J6HQJzxutoscsp+2gyONuz5D3dpA6zuh55N4s=
+github.com/gookit/slog v0.1.2/go.mod h1:V16hMCiDCDxsHyKroKRQeqxUTF/J5AxoEvJUci1zEgg=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
 github.com/imdario/mergo v0.3.11 h1:3tnifQM4i+fbajXKBHXWEH+KvNHqojZ778UH75j3bGA=
 github.com/imdario/mergo v0.3.11/go.mod h1:jmQim1M+e3UYxmgPu/WyfjB3N3VflVyUjjjwH0dnCYA=
