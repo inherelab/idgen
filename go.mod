@@ -7,6 +7,6 @@ require (
 	github.com/go-sql-driver/mysql v1.2.1-0.20140926190841-954375029540
 	github.com/gookit/config/v2 v2.0.21
 	github.com/gookit/gcli/v2 v2.3.4
-	github.com/gookit/goutil v0.3.8
+	github.com/gookit/goutil v0.3.9
 	github.com/gookit/slog v0.1.3
 )
