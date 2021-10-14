@@ -21,8 +21,8 @@ github.com/gookit/color v1.2.9/go.mod h1:AhIE+pS6D4Ql0SQWbBeXPHw7gY0/sjHoA4s/n1K
 github.com/gookit/color v1.3.0/go.mod h1:R3ogXq2B9rTbXoSHJ1HyUVAZ3poOJHpd9nQmyGZsfvQ=
 github.com/gookit/color v1.4.2 h1:tXy44JFSFkKnELV6WaMo/lLfu/meqITX3iAV52do7lk=
 github.com/gookit/color v1.4.2/go.mod h1:fqRyamkC1W8uxl+lxCQxOT09l/vYfZ+QeiX3rKQHCoQ=
-github.com/gookit/config/v2 v2.0.26 h1:GjoyJwrZwkQ5Vau8Dps5igBlLurKQ/aEX0djJka85j8=
-github.com/gookit/config/v2 v2.0.26/go.mod h1:q7I5c+hWOlzGh8jLff6CuNV6H2RDZ1QanaBEimGGtwE=
+github.com/gookit/config/v2 v2.0.27 h1:jCQSAe3qN8gFABz6h4qA9MNhTk0D4ipn6+1jeAD7g9E=
+github.com/gookit/config/v2 v2.0.27/go.mod h1:q7I5c+hWOlzGh8jLff6CuNV6H2RDZ1QanaBEimGGtwE=
 github.com/gookit/gcli/v2 v2.3.4 h1:g/o//Hcx0/cHEjG4bPypDFQtmAcKHzgBuOwXhadHovk=
 github.com/gookit/gcli/v2 v2.3.4/go.mod h1:HXk2Bon7HwODU2HGRQguIkG03jF6YrEokruony+Aj/c=
 github.com/gookit/goutil v0.3.5/go.mod h1:OHs5W5Xmfj4pCMXHnMxsDPrCc0SRbHLgJ2qs6wr5fxM=
@@ -30,6 +30,7 @@ github.com/gookit/goutil v0.3.13/go.mod h1:DdrxLZc3yakbuElOtTH8F2SWu3XhaJohgvKHS
 github.com/gookit/goutil v0.3.14/go.mod h1:YdGV0ObqRUlRq4/RzAQBHcd1Wzl/jKw7cppDBtD3q+U=
 github.com/gookit/goutil v0.3.15 h1:nfMiE1nlBES16zOsLzNeR/vo6a7KlV58womgG6dB+JM=
 github.com/gookit/goutil v0.3.15/go.mod h1:2w7h+/CB6n2m4qzECHj6+TOmMR8q7ierD9+LyybGy3I=
+github.com/gookit/ini/v2 v2.0.11 h1:Wl651xN2AaJbFrb8daBwWo8kS+sQHL3TddFi0/PRNXs=
 github.com/gookit/ini/v2 v2.0.11/go.mod h1:rIY8Uup5WDdPsrEE7VrF7fcMdGCCcPGA22Bk5R7roJQ=
 github.com/gookit/slog v0.1.5 h1:XaCisI6YZuczKyixr/AWoHdQzQdX3F8bu+Pf8ifaFpY=
 github.com/gookit/slog v0.1.5/go.mod h1:patKHESKW3dNK1N/BmeMidTWoioxxjRQdpA3no5yIPI=
