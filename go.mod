@@ -8,5 +8,5 @@ require (
 	github.com/gookit/config/v2 v2.0.27
 	github.com/gookit/gcli/v2 v2.3.4
 	github.com/gookit/goutil v0.4.4
-	github.com/gookit/slog v0.1.5
+	github.com/gookit/slog v0.2.1
 )
