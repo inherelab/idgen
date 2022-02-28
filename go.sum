@@ -27,15 +27,14 @@ github.com/gookit/config/v2 v2.0.27/go.mod h1:q7I5c+hWOlzGh8jLff6CuNV6H2RDZ1Qana
 github.com/gookit/gcli/v2 v2.3.4 h1:g/o//Hcx0/cHEjG4bPypDFQtmAcKHzgBuOwXhadHovk=
 github.com/gookit/gcli/v2 v2.3.4/go.mod h1:HXk2Bon7HwODU2HGRQguIkG03jF6YrEokruony+Aj/c=
 github.com/gookit/goutil v0.3.5/go.mod h1:OHs5W5Xmfj4pCMXHnMxsDPrCc0SRbHLgJ2qs6wr5fxM=
-github.com/gookit/goutil v0.3.13/go.mod h1:DdrxLZc3yakbuElOtTH8F2SWu3XhaJohgvKHSP0JRak=
 github.com/gookit/goutil v0.3.14/go.mod h1:YdGV0ObqRUlRq4/RzAQBHcd1Wzl/jKw7cppDBtD3q+U=
 github.com/gookit/goutil v0.3.15/go.mod h1:2w7h+/CB6n2m4qzECHj6+TOmMR8q7ierD9+LyybGy3I=
 github.com/gookit/goutil v0.4.4 h1:18xr8NKbs4LteyOHZfQ8g7JqTqZal801mAT6LERGdpE=
 github.com/gookit/goutil v0.4.4/go.mod h1:qlGVh0PI+WnWSjYnIocfz/7tkeogxL6+EDNP1mRe+7o=
 github.com/gookit/ini/v2 v2.0.11 h1:Wl651xN2AaJbFrb8daBwWo8kS+sQHL3TddFi0/PRNXs=
 github.com/gookit/ini/v2 v2.0.11/go.mod h1:rIY8Uup5WDdPsrEE7VrF7fcMdGCCcPGA22Bk5R7roJQ=
-github.com/gookit/slog v0.1.5 h1:XaCisI6YZuczKyixr/AWoHdQzQdX3F8bu+Pf8ifaFpY=
-github.com/gookit/slog v0.1.5/go.mod h1:patKHESKW3dNK1N/BmeMidTWoioxxjRQdpA3no5yIPI=
+github.com/gookit/slog v0.2.1 h1:EI47PlvpoPwxwkNTYaevN6iBNjo9nBxo0aQLiq+MTdk=
+github.com/gookit/slog v0.2.1/go.mod h1:CsbWzAaZA2FjLuGzvfTAR/QvFisZG31deOcZ05H++NI=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
 github.com/hashicorp/hcl/v2 v2.10.1/go.mod h1:FwWsfWEjyV/CMj8s/gqAuiviY72rJ1/oayI9WftqcKg=
 github.com/imdario/mergo v0.3.12 h1:b6R2BslTbIEToALKP7LxUvijTsNI9TAe80pLWN2g/HU=
