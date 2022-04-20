@@ -25,13 +25,12 @@ github.com/gookit/config/v2 v2.1.0/go.mod h1:2qFkfHkS7Aj4T1LaJh5jxejxhO34NM/eJj4
 github.com/gookit/gcli/v2 v2.3.4 h1:g/o//Hcx0/cHEjG4bPypDFQtmAcKHzgBuOwXhadHovk=
 github.com/gookit/gcli/v2 v2.3.4/go.mod h1:HXk2Bon7HwODU2HGRQguIkG03jF6YrEokruony+Aj/c=
 github.com/gookit/goutil v0.3.5/go.mod h1:OHs5W5Xmfj4pCMXHnMxsDPrCc0SRbHLgJ2qs6wr5fxM=
-github.com/gookit/goutil v0.4.4/go.mod h1:qlGVh0PI+WnWSjYnIocfz/7tkeogxL6+EDNP1mRe+7o=
 github.com/gookit/goutil v0.5.0 h1:SrbfjqZ8iprxJOfKZVT0yGJ4/82afr4Qa0RQwON19I4=
 github.com/gookit/goutil v0.5.0/go.mod h1:pq1eTibwb2wN96jrci0xy7xogWzzo9CihOQJEAvz4yQ=
 github.com/gookit/ini/v2 v2.1.0 h1:L1qn8CfP1KYlbogKuMsJ3FiDdKDwvABCKeeuMWDlQzQ=
 github.com/gookit/ini/v2 v2.1.0/go.mod h1:r06awbwBtIHxjA7ndqWJkRgCAvSG+5FdSGrrbGfigtY=
-github.com/gookit/slog v0.2.1 h1:EI47PlvpoPwxwkNTYaevN6iBNjo9nBxo0aQLiq+MTdk=
-github.com/gookit/slog v0.2.1/go.mod h1:CsbWzAaZA2FjLuGzvfTAR/QvFisZG31deOcZ05H++NI=
+github.com/gookit/slog v0.2.2 h1:6QbdtlVXm+U4KTnUM3+su09s4RkpllAzO92yp+3NtQw=
+github.com/gookit/slog v0.2.2/go.mod h1:9Sh1Utw3LVG0kqN++ankdfrCVQ7yixKDL1+YrYvIulU=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
 github.com/hashicorp/hcl/v2 v2.11.1/go.mod h1:FwWsfWEjyV/CMj8s/gqAuiviY72rJ1/oayI9WftqcKg=
 github.com/imdario/mergo v0.3.12 h1:b6R2BslTbIEToALKP7LxUvijTsNI9TAe80pLWN2g/HU=
@@ -67,6 +66,8 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.1 h1:5TQK59W5E3v0r2duFAb7P95B6hEeOyEnHRa8MjYSMTY=
 github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
+github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
+github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/vmihailenco/msgpack v3.3.3+incompatible/go.mod h1:fy3FlTQTDXWkZ7Bh6AcGMlsjHatGryHQYUTf1ShIgkk=
 github.com/vmihailenco/msgpack/v4 v4.3.12/go.mod h1:gborTTJjAo/GWTqqRjrLCn9pgNN+NXzzngzBKDPIqw4=
 github.com/vmihailenco/tagparser v0.1.1/go.mod h1:OeAg3pn3UbLjkWt+rN9oFYB6u/cQgqMEUPoW2WPyhdI=
