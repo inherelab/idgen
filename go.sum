@@ -44,7 +44,6 @@ github.com/gookit/config/v2 v2.2.1/go.mod h1:22ZTM0ve1ESyAx/ocUfjOrQ5ztFwy1Rs3YH
 github.com/gookit/gcli/v2 v2.3.4 h1:g/o//Hcx0/cHEjG4bPypDFQtmAcKHzgBuOwXhadHovk=
 github.com/gookit/gcli/v2 v2.3.4/go.mod h1:HXk2Bon7HwODU2HGRQguIkG03jF6YrEokruony+Aj/c=
 github.com/gookit/goutil v0.3.5/go.mod h1:OHs5W5Xmfj4pCMXHnMxsDPrCc0SRbHLgJ2qs6wr5fxM=
-github.com/gookit/goutil v0.6.1/go.mod h1:s2xa6+NP2nxI+h88TUAio7xROJzZaerEfkzJ0+lqvm4=
 github.com/gookit/goutil v0.6.4/go.mod h1:90KOayLmcX12ZcbvQ6JakwJ7g4GbpzfjkOl7BHk6tAY=
 github.com/gookit/goutil v0.6.5/go.mod h1:90KOayLmcX12ZcbvQ6JakwJ7g4GbpzfjkOl7BHk6tAY=
 github.com/gookit/goutil v0.6.6/go.mod h1:D++7kbQd/6vECyYTxB5tq6AKDIG9ZYwZNhubWJvN9dw=
@@ -55,8 +54,8 @@ github.com/gookit/gsr v0.0.8/go.mod h1:Q3CLTuluDDyk9/Du6xM721lG9/LQ3ywZde9bjmHyW
 github.com/gookit/ini/v2 v2.2.1 h1:6fCrz8icnUHhYqGZwu7RtHLh+v+ErrgrAt9+aIcoJCc=
 github.com/gookit/ini/v2 v2.2.1/go.mod h1:as7p0WsJg4sufGECEqNdY/+I026qRnyzPa4UYHuuOR4=
 github.com/gookit/properties v0.3.0/go.mod h1:020VQRBo8R5gJZaMc+ohmLmUv4esuv5xw3/zNJYvxuE=
-github.com/gookit/slog v0.4.0 h1:nXkH3NF+2eToZwAuv0J6TAVFzQibluGQvwA9VktkaB8=
-github.com/gookit/slog v0.4.0/go.mod h1:e7FJP9JjOIXwQckVm8KQLrE80d+f9WmiR6ZY4WWZiHU=
+github.com/gookit/slog v0.5.0 h1:GJYg34NTFEVTU+AZAjxT5FzBhS9WYB+/hPNN/+Bu0vo=
+github.com/gookit/slog v0.5.0/go.mod h1:b4Z2URWbEyYa5xge4RfFAIVinhj2aVEZ9r5O9gL8SJ8=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
 github.com/hashicorp/hcl/v2 v2.16.1/go.mod h1:JRmR89jycNkrrqnMmvPDMd56n1rQJ2Q6KocSLCMCXng=
 github.com/imdario/mergo v0.3.13 h1:lFzP57bqS/wsqKssCGmtLAb8A0wKjLGrve2q3PPVcBk=
@@ -167,7 +166,6 @@ golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
 golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
 golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
 golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
-golang.org/x/text v0.5.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
 golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
 golang.org/x/text v0.8.0 h1:57P1ETyNKtuIjB4SRd15iJxuhj8Gc416Y78H3qgMh68=
 golang.org/x/text v0.8.0/go.mod h1:e1OnstbJyHTd6l/uOt8jFFHp6TRDWZR/bV3emEE/zU8=
